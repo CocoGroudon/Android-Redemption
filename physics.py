@@ -9,3 +9,7 @@ class Physics:
 class Player():
     def __init__(self) -> None:
         pass
+
+class Enemies():
+    def __init__(self) -> None:
+        pass
