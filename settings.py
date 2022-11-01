@@ -1,2 +1,2 @@
 framerate = 10
-backgroundcolor = (255,255,255)
+backgroundcolor = (50,50,50)

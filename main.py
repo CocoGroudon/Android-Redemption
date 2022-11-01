@@ -1,5 +1,4 @@
 import pygame
-# import threading
 import settings
 
 class Game:
@@ -10,7 +9,6 @@ class Game:
         self.backgroundcolor = settings.backgroundcolor
 
     def draw(self):
-        print("draw")
         self.screen.fill(self.backgroundcolor)
         
     def handle_keyinputs(self):
@@ -22,8 +20,6 @@ class Game:
                     pygame.display.toggle_fullscreen()
 
     def run(self):
-        # self.game_thread = threading.Thread(target=self.__run)
-        # self.game_thread.start()
         self.__run()
 
     def stop(self):
