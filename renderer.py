@@ -1,15 +1,17 @@
 from typing import Tuple
 import pygame
+from main import Game
 import settings
 import assets
+from world import WorldEngine
 
 class Renderer:
-    def __init__(self,* , game_engine_ref ,world_engine_ref) -> None:
+    def __init__(self,* , game_engine_ref:Game ,world_engine_ref:WorldEngine) -> None:
         self.game = game_engine_ref
         self.wold_engine = world_engine_ref
         self.camera_ofsett = [0,0]
     
-    def blit_world(self):
+    def blit_world(self) -> None:
         for xIndex, xList in enumerate(self.wold_engine.world):
             for yIndex, block in enumerate(xList):
                 block_position = xIndex*settings.blocksize+self.camera_ofsett[0], yIndex*settings.blocksize+self.camera_ofsett[1]

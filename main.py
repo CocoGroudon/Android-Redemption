@@ -2,12 +2,14 @@ import pygame
 import settings
 import world
 import renderer
+import physics
 
 class Game:
     def __init__(self) -> None:
         self.screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
         self.world_engine = world.WorldEngine()
         self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
+        self.physics_engine = physics.Physics()
 
         self.framerate = settings.framerate
         self.backgroundcolor = settings.backgroundcolor
@@ -31,7 +33,7 @@ class Game:
                     self.render_engine.camera_ofsett[1] += 16
                 elif event.key == settings.keybinds["right"]:
                     self.render_engine.camera_ofsett[0] += 16
-        
+
     def event_shutdown(self):
         self.world_engine.save_world_to_memory()
 
