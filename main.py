@@ -26,13 +26,13 @@ class Game:
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
                 elif event.key == settings.keybinds["up"]:
-                    self.render_engine.camera_ofsett[1] -= 16
+                    self.render_engine.camera_ofset[1] -= 16
                 elif event.key == settings.keybinds["left"]:
-                    self.render_engine.camera_ofsett[0] -= 16
+                    self.render_engine.camera_ofset[0] -= 16
                 elif event.key == settings.keybinds["down"]:
-                    self.render_engine.camera_ofsett[1] += 16
+                    self.render_engine.camera_ofset[1] += 16
                 elif event.key == settings.keybinds["right"]:
-                    self.render_engine.camera_ofsett[0] += 16
+                    self.render_engine.camera_ofset[0] += 16
 
     def event_shutdown(self):
         self.world_engine.save_world_to_memory()
