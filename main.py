@@ -7,17 +7,19 @@ import physics
 class Game:
     def __init__(self) -> None:
         self.screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
+        self.clock = pygame.time.Clock()
+        self.framerate = settings.framerate
+        self.backgroundcolor = settings.backgroundcolor
+        
         self.world_engine = world.WorldEngine()
+        self.world_engine.load_world_from_memory()
         self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
         self.physics_engine = physics.Physics()
 
-        self.framerate = settings.framerate
-        self.backgroundcolor = settings.backgroundcolor
-
     def draw(self):
-        self.screen.fill(self.backgroundcolor)
-        self.render_engine.blit_world()
-        
+        self.screen.fill((settings.backgroundcolor))
+        self.render_engine.draw()
+
     def handle_keyinputs(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -45,12 +47,11 @@ class Game:
 
     def __run(self):
         self.isRunning = True
-        clock = pygame.time.Clock()
         while self.isRunning:
             self.handle_keyinputs()
             self.draw()    
             pygame.display.flip()
-            clock.tick(self.framerate)
+            self.clock.tick(0)
         self.event_shutdown()
 
 

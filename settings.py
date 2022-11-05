@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import pygame
 
-framerate = 10
+framerate = 0
 backgroundcolor = (0, 43, 53)
 
 world_name = "test"
