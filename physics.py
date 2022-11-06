@@ -10,12 +10,12 @@ class Physics:
     def __init__(self, worldengine_ref:WorldEngine) -> None:
         self.world_engine = worldengine_ref
         self.entities: Entity = []
-        self.entities.append(Entity(self.world_engine, (80,150), (16,16), assets.textureMap["test_entity"]))
-        self.entities.append(Entity(self.world_engine, (0,0), (16,16), assets.textureMap["test_entity"]))
+        self.entities.append(Entity(self.world_engine, (80,64), (16,16), assets.textureMap["test_entity"]))
+        self.entities.append(Entity(self.world_engine, (40,40), (16,16), assets.textureMap["test_entity"]))
         
     def tick(self):
         for entity in self.entities:
-            entity.move((-0.1, -0.1))
+            entity.move((0.1, 0))
 
 class Entity:
     def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple, image:pygame.image) -> None:
