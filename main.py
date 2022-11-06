@@ -1,4 +1,6 @@
 import pygame
+
+import assets
 import settings
 import world
 import renderer
@@ -14,11 +16,13 @@ class Game:
         self.world_engine = world.WorldEngine()
         self.world_engine.load_world_from_memory()
         self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
-        self.physics_engine = physics.Physics()
+        self.physics_engine = physics.Physics(self.world_engine)
 
     def draw(self):
         self.screen.fill((settings.backgroundcolor))
         self.render_engine.draw()
+        
+        self.render_engine.blit_element(assets.textureMap["test_entity"], self.physics_engine.entities[0].pos)
 
     def handle_keyinputs(self):
         for event in pygame.event.get():
@@ -50,8 +54,9 @@ class Game:
         while self.isRunning:
             self.handle_keyinputs()
             self.draw()    
+            self.physics_engine.tick()
             pygame.display.flip()
-            self.clock.tick(0)
+            self.clock.tick(settings.framerate)
         self.event_shutdown()
 
 

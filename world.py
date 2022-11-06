@@ -86,4 +86,7 @@ if __name__ == "__main__":
     world_engine.set_block((1,2), 1)
     world_engine.set_block((2,2), 1)
     world_engine.set_block((3,2), 1)
+    world_engine.set_block((6,0), 1)
+    world_engine.set_block((6,1), 1)
+    world_engine.set_block((6,2), 1)
     world_engine.save_world_to_memory()
