@@ -10,28 +10,29 @@ class Physics:
     def __init__(self, worldengine_ref:WorldEngine) -> None:
         self.world_engine = worldengine_ref
         self.entities: Entity = []
-        self.entities.append(Entity(self.world_engine, (0,0), (16,16), assets.textureMap["test_entity"]))
+        self.entities.append(Entity(self.world_engine, (80,150), (16,16), assets.textureMap["test_entity"]))
         self.entities.append(Entity(self.world_engine, (0,0), (16,16), assets.textureMap["test_entity"]))
         
     def tick(self):
         for entity in self.entities:
-            entity.move((0.2, 0.1))
+            entity.move((-0.1, -0.1))
 
 class Entity:
     def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple, image:pygame.image) -> None:
         self.world_engine = wordlengine_ref
         self.pos = pos
         self.size = size
-        self.image = image
-        
+        self.image = image         
+        self.ray_ofsett = settings.entity_move_rays_ofsett
         self.pos_ray = Ray(self, (0,0))
         self.set_move_rays()
     
     def set_move_rays(self):
-        top_left = Ray(self, (0.1,0.1))
-        top_right = Ray(self, (self.size[0]-0.1,0.1))
-        bottom_left = Ray(self, (0.1,self.size[1]-0.1))
-        bottom_right = Ray(self, (self.size[0]-0.1, self.size[1]-0.1))
+        ofsett = self.ray_ofsett
+        top_left = Ray(self, (ofsett,ofsett))
+        top_right = Ray(self, (self.size[0]-ofsett,ofsett))
+        bottom_left = Ray(self, (ofsett,self.size[1]-ofsett))
+        bottom_right = Ray(self, (self.size[0]-ofsett, self.size[1]-ofsett))
         self.move_rays = top_left, top_right, bottom_left, bottom_right
         
     def move(self, movement:tuple):
@@ -56,7 +57,7 @@ class Entity:
             return
         
         if record <move_len: # Spieler fliegt gegen Wand
-            self.pos = self.pos_ray.get_pos_for_len(record-0.2, angle)
+            self.pos = self.pos_ray.get_pos_for_len(record- self.ray_ofsett, angle)
         else: 
             self.pos = self.pos_ray.get_pos_for_len(move_len, angle)
             

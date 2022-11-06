@@ -4,9 +4,14 @@ import pygame
 
 framerate = 0
 backgroundcolor = (0, 43, 53)
+blocksize = 32
 
+# World
 world_name = "test"
 world_dimensions = (500, 100)
+
+# Physics
+entity_move_rays_ofsett = 0.01
 
 keybinds = {
     "up": pygame.K_w,
@@ -16,5 +21,4 @@ keybinds = {
     "toggle_fullscreen": pygame.K_F11
 }
 
-blocksize = 32
 dictPath = os.path.dirname(Path(__file__))
