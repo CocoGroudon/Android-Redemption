@@ -64,17 +64,6 @@ class Entity:
             
         
 
-# class Player(Entity):
-#     def __init__(self) -> None:
-#         super().__init__((1,0))
-#         self.print_pos()
-    
-
-
-# class Enemies():
-#     def __init__(self) -> None:
-#         pass
-    
     
     
 class Ray:
@@ -174,3 +163,35 @@ class Ray:
         pygame.draw.circle(screen, (120,120,200), pos, 5)
         pygame.draw.aaline(screen, (120,120,200), pos, self.get_pos_for_len(16, 0))
         
+
+
+
+
+
+class Player(Entity):
+
+    def __init__(self, pos:tuple, size:tuple, image:pygame.image) -> None:
+        self.pos = pos
+        self.size = size
+        self.image = image         
+        self.ray_ofsett = settings.entity_move_rays_ofsett
+        self.pos_ray = Ray(self, (0,0))
+        self.set_move_rays()
+
+    def move(self, movement:tuple):
+        angle = self.pos_ray.get_angle_for_movement(movement)
+        move_len = self.pos_ray.get_len_for_movement(movement)
+        record = None
+        
+        for ray in self.move_rays:
+            dist = ray.get_dist_to_walls(self.world_engine.walls, move_len, angle)
+            if dist:
+                if record == None:
+                    record = dist
+                if dist < record:
+                    record = dist
+
+class Enemies(Entity):
+     def __init__(self) -> None:
+        pass
+    

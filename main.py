@@ -18,7 +18,7 @@ class Game:
         self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
         self.physics_engine = physics.Physics(self.world_engine)
         
-        self.world_edit_mode = False
+        self.world_edit_mode = True
         self.world_edit_current_block = 1
         
         self.debug_mode = True
