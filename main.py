@@ -17,6 +17,11 @@ class Game:
         self.world_engine.load_world_from_memory()
         self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
         self.physics_engine = physics.Physics(self.world_engine)
+        
+        self.world_edit_mode = False
+        self.world_edit_current_block = 1
+        
+        self.debug_mode = True
 
     def draw(self):
         self.screen.fill((settings.backgroundcolor))
@@ -32,13 +37,21 @@ class Game:
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
                 elif event.key == settings.keybinds["up"]:
-                    self.render_engine.camera_ofset[1] -= 16
-                elif event.key == settings.keybinds["left"]:
-                    self.render_engine.camera_ofset[0] -= 16
-                elif event.key == settings.keybinds["down"]:
                     self.render_engine.camera_ofset[1] += 16
-                elif event.key == settings.keybinds["right"]:
+                elif event.key == settings.keybinds["left"]:
                     self.render_engine.camera_ofset[0] += 16
+                elif event.key == settings.keybinds["down"]:
+                    self.render_engine.camera_ofset[1] -= 16
+                elif event.key == settings.keybinds["right"]:
+                    self.render_engine.camera_ofset[0] -= 16
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if self.world_edit_mode:
+                    if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
+                        self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
+                        return
+                    block_pos = self.render_engine.get_world_block_for_mouse_pos(mouse_pos)
+                    self.world_engine.set_block(block_pos, self.world_edit_current_block)
 
     def event_shutdown(self):
         self.world_engine.save_world_to_memory()

@@ -1,5 +1,6 @@
 from typing import Tuple
 import pygame
+import math
 
 import settings
 import assets
@@ -11,22 +12,33 @@ class Renderer:
         self.game = game_engine_ref
         self.wold_engine = world_engine_ref
         self.camera_ofset = [0,0]
-        
-        self.screen = self.game.screen
-        self.debug_screen = pygame.Surface((300, 500), flags=pygame.SRCALPHA)
-        
         pygame.font.init()
         self.debug_font = pygame.font.SysFont("Calibri", 15)
+    
+        self.screen = self.game.screen
+        
+        self.debug_screen = pygame.Surface((300, 500), flags=pygame.SRCALPHA)
+        
+        self.block_choices_screen = pygame.Surface((settings.blocksize, len(settings.block_choices)*settings.blocksize), flags=pygame.SRCALPHA)
+        self.block_choices_screen_update()
+
+        
+        
     
     def draw(self):
         # self.screen.fill((0,0,0,0)) # Falls wir den Renderer Surface und den von dem Game trennen wollen
         self.blit_world()
-        self.blit_walls()
         self.blit_entities()
         
+        if settings.render_walls:
+            self.blit_walls()
         
-        self.debu_menu_update()
-        self.screen.blit(self.debug_screen, (10,10))
+        if self.game.world_edit_mode:
+            self.screen.blit(self.block_choices_screen, settings.block_choices_screen_ofsett)
+        
+        if self.game.debug_mode:
+            self.debu_menu_update()
+            self.screen.blit(self.debug_screen, (10,10))
     
     def blit_world(self) -> None:
         for block in self.wold_engine.block_list:
@@ -53,11 +65,42 @@ class Renderer:
         for enitity in self.game.physics_engine.entities:
             self.blit_element(enitity.image, enitity.pos)
 
-    
     def blit_element(self, element:pygame.surface or pygame.image, position:Tuple[int, int]) -> None:
         """ 
         !!! Die Position ist in Pixel und nicht in weltblöcken !!!
         Das Element wird an der Position korospondierend zu der Welt gerendert. 
         """
         self.screen.blit(element, [a+b for a,b in zip(position,self.camera_ofset)])
-    
+        
+    def get_world_block_for_mouse_pos(self, mouse_pos:tuple) -> tuple:
+        mouse_x, mouse_y = mouse_pos
+        
+        mouse_x -= self.camera_ofset[0]
+        mouse_y -= self.camera_ofset[1]
+        
+        mouse_x //= settings.blocksize
+        mouse_y //= settings.blocksize
+        
+        return mouse_x, mouse_y
+        
+    def block_choices_screen_update(self):
+        self.block_choices_screen.fill((0,0,0,0))
+        for index, block in enumerate(settings.block_choices):
+            self.block_choices_screen.blit(assets.textureMap[block], (0, index*settings.blocksize))
+        pygame.draw.line(self.block_choices_screen, (255,255,255), (0,0), (settings.blocksize,0))
+        pygame.draw.line(self.block_choices_screen, (255,255,255), (0,0), (0,settings.blocksize*len(settings.block_choices)-1))
+        pygame.draw.line(self.block_choices_screen, (255,255,255), (0,settings.blocksize*len(settings.block_choices)-1), (settings.blocksize-1,settings.blocksize*len(settings.block_choices)-1))
+        pygame.draw.line(self.block_choices_screen, (255,255,255), (settings.blocksize-1,0), (settings.blocksize-1,settings.blocksize*len(settings.block_choices)-1))
+            
+    def block_choices_screen_get_clicked(self, mouse_pos:tuple):
+        relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, settings.block_choices_screen_ofsett)]
+        block = math.floor(relateive_mouse_pos[1] / settings.blocksize)
+        print(f"{relateive_mouse_pos=} , {block=}")
+        return settings.block_choices[block]
+
+        
+    def block_choices_get_if_clicked_on(self, mouse_pos:tuple) -> bool:
+        relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, settings.block_choices_screen_ofsett)]
+        clicked = self.block_choices_screen.get_rect().collidepoint(relateive_mouse_pos)
+        print(clicked)
+        return clicked
