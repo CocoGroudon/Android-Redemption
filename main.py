@@ -22,7 +22,7 @@ class Game:
         self.screen.fill((settings.backgroundcolor))
         self.render_engine.draw()
         
-        self.render_engine.blit_element(assets.textureMap["test_entity"], self.physics_engine.entities[0].pos)
+        # self.render_engine.blit_element(assets.textureMap["test_entity"], self.physics_engine.entities[0].pos)
 
     def handle_keyinputs(self):
         for event in pygame.event.get():

@@ -22,14 +22,11 @@ class Renderer:
         # self.screen.fill((0,0,0,0)) # Falls wir den Renderer Surface und den von dem Game trennen wollen
         self.blit_world()
         self.blit_walls()
+        self.blit_entities()
+        
         
         self.debu_menu_update()
         self.screen.blit(self.debug_screen, (10,10))
-        
-        for ray in self.game.physics_engine.entities[0].move_rays:
-            ray.draw(self.screen)
-            
-        self.game.physics_engine.entities[0].move_rays[1].draw(self.screen)
     
     def blit_world(self) -> None:
         for block in self.wold_engine.block_list:
@@ -52,6 +49,11 @@ class Renderer:
             entity_text = self.debug_font.render(f"Entity - Pos:{round(entity.pos[0], 2)}|{round(entity.pos[1], 2)}", False, 6)
             self.debug_screen.blit(entity_text, (0, 10 + 10*entityNr))
             
+    def blit_entities(self):
+        for enitity in self.game.physics_engine.entities:
+            self.blit_element(enitity.image, enitity.pos)
+
+    
     def blit_element(self, element:pygame.surface or pygame.image, position:Tuple[int, int]) -> None:
         """ 
         !!! Die Position ist in Pixel und nicht in weltblöcken !!!

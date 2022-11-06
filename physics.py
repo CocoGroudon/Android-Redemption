@@ -1,5 +1,7 @@
 import pygame
 import math
+
+import assets
 import settings
 from world import WorldEngine, Wall
 
@@ -8,17 +10,20 @@ class Physics:
     def __init__(self, worldengine_ref:WorldEngine) -> None:
         self.world_engine = worldengine_ref
         self.entities: Entity = []
-        self.entities.append(Entity(self.world_engine, (2,5), (16,16)))
+        self.entities.append(Entity(self.world_engine, (0,0), (16,16), assets.textureMap["test_entity"]))
+        self.entities.append(Entity(self.world_engine, (0,0), (16,16), assets.textureMap["test_entity"]))
         
     def tick(self):
         for entity in self.entities:
-            entity.move((0, 1))
+            entity.move((0.2, 0.1))
 
 class Entity:
-    def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple) -> None:
+    def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple, image:pygame.image) -> None:
         self.world_engine = wordlengine_ref
         self.pos = pos
         self.size = size
+        self.image = image
+        
         self.pos_ray = Ray(self, (0,0))
         self.set_move_rays()
     
@@ -78,8 +83,8 @@ class Ray:
     
     def get_origin_pos(self) -> tuple: 
         x, y = self.owner.pos
-        x += self.pos_ofsett[0]*2
-        y += self.pos_ofsett[1]*2
+        x += self.pos_ofsett[0]
+        y += self.pos_ofsett[1]
         return x,y 
     
     def get_pos_for_len(self, len:float, angle:float) -> tuple:
@@ -108,13 +113,17 @@ class Ray:
         delta_x = pos[0]-x
         delta_y = pos[1]-y
 
-        return math.atan2(delta_y, delta_x)
+        angle = math.atan2(delta_y, delta_x)
+        angle = (angle/math.pi*180)
+        return angle
     
     def get_angle_for_movement(self, movement:tuple) -> float:
         delta_x = movement[0]
         delta_y = movement[1]
 
-        return math.atan2(delta_y, delta_x)
+        angle = math.atan2(delta_y, delta_x)
+        angle = (angle/math.pi*180)
+        return angle
 
     def check_intersection_with_wall(self, wall:Wall, ray_len:int, angle:float) -> False or tuple:
         y1 = wall.y1
