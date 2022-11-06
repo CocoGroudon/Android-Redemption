@@ -1,3 +1,3 @@
 import math
 
-print(math.atan2(0,1))
+print(math.atan(90/0))
