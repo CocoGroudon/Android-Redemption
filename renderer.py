@@ -47,7 +47,7 @@ class Renderer:
             block_y = block[0][1]
             block_value = block[1]
             
-            block_position = block_x*settings.blocksize+self.camera_ofset[0], block_y*settings.blocksize+self.camera_ofset[1]
+            block_position = block_x*settings.blocksize-self.camera_ofset[0], block_y*settings.blocksize-self.camera_ofset[1]
             self.screen.blit(assets.textureMap[block_value], block_position)
 
     def blit_walls(self):
@@ -74,7 +74,7 @@ class Renderer:
         !!! Die Position ist in Pixel und nicht in weltblöcken !!!
         Das Element wird an der Position korospondierend zu der Welt gerendert. 
         """
-        self.screen.blit(element, [a+b for a,b in zip(position,self.camera_ofset)])
+        self.screen.blit(element, [a-b for a,b in zip(position,self.camera_ofset)])
         
     def get_world_block_for_mouse_pos(self, mouse_pos:tuple) -> tuple:
         mouse_x, mouse_y = mouse_pos
