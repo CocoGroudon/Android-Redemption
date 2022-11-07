@@ -12,7 +12,9 @@ class Physics:
         self.entities: Entity = []
         self.entities.append(Entity(self.world_engine, (80,64), (16,16), assets.textureMap["test_entity"]))
         self.entities.append(Entity(self.world_engine, (40,40), (16,16), assets.textureMap["test_entity"]))
-        
+        self.player: Player = []
+        self.player.append( Player(self.world_engine, (20,40), (16,16), assets.textureMap["player_entity"]))
+
     def tick(self):
         for entity in self.entities:
             entity.move((0.1, 0))
@@ -170,26 +172,10 @@ class Ray:
 
 class Player(Entity):
 
-    def __init__(self, pos:tuple, size:tuple, image:pygame.image) -> None:
-        self.pos = pos
-        self.size = size
-        self.image = image         
-        self.ray_ofsett = settings.entity_move_rays_ofsett
-        self.pos_ray = Ray(self, (0,0))
-        self.set_move_rays()
+    def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple, image:pygame.image) -> None:
+        super.__init__(self)
 
-    def move(self, movement:tuple):
-        angle = self.pos_ray.get_angle_for_movement(movement)
-        move_len = self.pos_ray.get_len_for_movement(movement)
-        record = None
-        
-        for ray in self.move_rays:
-            dist = ray.get_dist_to_walls(self.world_engine.walls, move_len, angle)
-            if dist:
-                if record == None:
-                    record = dist
-                if dist < record:
-                    record = dist
+    
 
 class Enemies(Entity):
      def __init__(self) -> None:

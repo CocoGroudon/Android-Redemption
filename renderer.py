@@ -29,6 +29,7 @@ class Renderer:
         # self.screen.fill((0,0,0,0)) # Falls wir den Renderer Surface und den von dem Game trennen wollen
         self.blit_world()
         self.blit_entities()
+        self.blit_player()
         
         if settings.render_walls:
             self.blit_walls()
@@ -62,8 +63,12 @@ class Renderer:
             self.debug_screen.blit(entity_text, (0, 10 + 10*entityNr))
             
     def blit_entities(self):
-        for enitity in self.game.physics_engine.entities:
-            self.blit_element(enitity.image, enitity.pos)
+        for entity in self.game.physics_engine.entities:
+            self.blit_element(entity.image, entity.pos)
+
+    def blit_player(self):
+        for player in self.game.physics_engine.player:
+            self.blit_element(player.image, player.pos)
 
     def blit_element(self, element:pygame.surface or pygame.image, position:Tuple[int, int]) -> None:
         """ 
