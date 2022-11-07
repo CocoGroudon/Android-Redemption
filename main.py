@@ -36,13 +36,13 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
-                elif event.key == settings.keybinds["up"]:
+                elif event.key in settings.keybinds["up"]:
                     self.render_engine.camera_ofset[1] += 16
-                elif event.key == settings.keybinds["left"]:
+                elif event.key in settings.keybinds["left"]:
                     self.render_engine.camera_ofset[0] += 16
-                elif event.key == settings.keybinds["down"]:
+                elif event.key in settings.keybinds["down"]:
                     self.render_engine.camera_ofset[1] -= 16
-                elif event.key == settings.keybinds["right"]:
+                elif event.key in settings.keybinds["right"]:
                     self.render_engine.camera_ofset[0] -= 16
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()

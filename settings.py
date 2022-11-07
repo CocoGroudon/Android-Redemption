@@ -19,10 +19,10 @@ block_choices = (0,1,2,127)
 render_walls = False
 
 keybinds = {
-    "up": pygame.K_w,
-    "left": pygame.K_a,
-    "down": pygame.K_s,
-    "right": pygame.K_d,
+    "up": [pygame.K_w, pygame.K_UP ],
+    "left": [pygame.K_a, pygame.K_LEFT ],
+    "down": [pygame.K_s, pygame.K_DOWN ],
+    "right": [pygame.K_d, pygame.K_RIGHT ],
     "toggle_fullscreen": pygame.K_F11
 }
 
