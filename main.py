@@ -37,14 +37,24 @@ class Game:
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
                 elif event.key in settings.keybinds["up"]:
-                    self.render_engine.camera_ofset[1] += 16
-                    
+                    self.physics_engine.player.speed_y -= 1
                 elif event.key in settings.keybinds["left"]:
-                    self.render_engine.camera_ofset[0] += 16
+                    self.physics_engine.player.speed_x -= 1
                 elif event.key in settings.keybinds["down"]:
-                    self.render_engine.camera_ofset[1] -= 16
+                    self.physics_engine.player.speed_y += 1
                 elif event.key in settings.keybinds["right"]:
-                    self.render_engine.camera_ofset[0] -= 16
+                    self.physics_engine.player.speed_x += 1
+            elif event.type == pygame.KEYUP:
+                if event.key == settings.keybinds["toggle_fullscreen"]:
+                    pygame.display.toggle_fullscreen()
+                elif event.key in settings.keybinds["up"]:
+                    self.physics_engine.player.speed_y += 1
+                elif event.key in settings.keybinds["left"]:
+                    self.physics_engine.player.speed_x += 1
+                elif event.key in settings.keybinds["down"]:
+                    self.physics_engine.player.speed_y -= 1
+                elif event.key in settings.keybinds["right"]:
+                    self.physics_engine.player.speed_x -= 1
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.world_edit_mode:

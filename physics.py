@@ -12,11 +12,14 @@ class Physics:
         self.entities: Entity = []
         self.entities.append(Entity(self.world_engine, (80,64), (16,16), assets.textureMap["test_entity"]))
         self.entities.append(Entity(self.world_engine, (40,40), (16,16), assets.textureMap["test_entity"]))
-        self.player = Player(self.world_engine, (20,40), (16,16), assets.textureMap["player_entity"])
+        self.player = Player(self.world_engine, (40,40), (40,80), assets.textureMap["player_entity"])
 
     def tick(self):
+        self.player.move((self.player.speed_x, self.player.speed_y))
         for entity in self.entities:
             entity.move((0.1, 0))
+        
+        
 
 class Entity:
     def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple, image:pygame.image) -> None:
@@ -172,7 +175,8 @@ class Ray:
 class Player(Entity):
     def __init__(self, wordlengine_ref: WorldEngine, pos: tuple, size: tuple, image: pygame.image) -> None:
         super().__init__(wordlengine_ref, pos, size, image)
-
+        self.speed_x = 0
+        self.speed_y = 0
 
     
 
