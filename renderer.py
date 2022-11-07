@@ -67,8 +67,7 @@ class Renderer:
             self.blit_element(entity.image, entity.pos)
 
     def blit_player(self):
-        for player in self.game.physics_engine.player:
-            self.blit_element(player.image, player.pos)
+        self.blit_element(self.game.physics_engine.player.image, self.game.physics_engine.player.pos)
 
     def blit_element(self, element:pygame.surface or pygame.image, position:Tuple[int, int]) -> None:
         """ 

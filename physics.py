@@ -12,8 +12,7 @@ class Physics:
         self.entities: Entity = []
         self.entities.append(Entity(self.world_engine, (80,64), (16,16), assets.textureMap["test_entity"]))
         self.entities.append(Entity(self.world_engine, (40,40), (16,16), assets.textureMap["test_entity"]))
-        self.player: Player = []
-        self.player.append( Player(self.world_engine, (20,40), (16,16), assets.textureMap["player_entity"]))
+        self.player = Player(self.world_engine, (20,40), (16,16), assets.textureMap["player_entity"])
 
     def tick(self):
         for entity in self.entities:
@@ -171,9 +170,9 @@ class Ray:
 
 
 class Player(Entity):
+    def __init__(self, wordlengine_ref: WorldEngine, pos: tuple, size: tuple, image: pygame.image) -> None:
+        super().__init__(wordlengine_ref, pos, size, image)
 
-    def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple, image:pygame.image) -> None:
-        super.__init__(self)
 
     
 
