@@ -11,7 +11,7 @@ class Wall:
     y2: int
 
     def draw(self, screen, ofsett:tuple):
-        pygame.draw.line(screen, (255,255,255), (self.x1+ofsett[0], self.y1+ofsett[1]), (self.x2+ofsett[0], self.y2+ofsett[1]))
+        pygame.draw.line(screen, (255,255,255), (self.x1-ofsett[0], self.y1-ofsett[1]), (self.x2-ofsett[0], self.y2-ofsett[1]))
 
 class WorldEngine:
     def __init__(self) -> None:
