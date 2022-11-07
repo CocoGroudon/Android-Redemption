@@ -12,7 +12,7 @@ class Physics:
         self.entities: Entity = []
         self.entities.append(Entity(self.world_engine, (80,64), (16,16), assets.textureMap["test_entity"]))
         self.entities.append(Entity(self.world_engine, (40,40), (16,16), assets.textureMap["test_entity"]))
-        self.player = Player(self.world_engine, (40,40), (40,80), assets.textureMap["player_entity"])
+        self.player = Player(self.world_engine, (40,40), (32,64), assets.textureMap["player_entity"])
 
     def tick(self):
         self.player.move((self.player.speed_x, self.player.speed_y))
