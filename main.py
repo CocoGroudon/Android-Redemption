@@ -38,6 +38,7 @@ class Game:
                     pygame.display.toggle_fullscreen()
                 elif event.key in settings.keybinds["up"]:
                     self.render_engine.camera_ofset[1] += 16
+                    
                 elif event.key in settings.keybinds["left"]:
                     self.render_engine.camera_ofset[0] += 16
                 elif event.key in settings.keybinds["down"]:
