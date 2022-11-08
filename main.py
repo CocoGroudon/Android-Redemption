@@ -1,4 +1,6 @@
 import pygame
+
+import assets
 import settings
 import world
 import renderer
@@ -7,17 +9,26 @@ import physics
 class Game:
     def __init__(self) -> None:
         self.screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
-        self.world_engine = world.WorldEngine()
-        self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
-        self.physics_engine = physics.Physics()
-
+        self.clock = pygame.time.Clock()
         self.framerate = settings.framerate
         self.backgroundcolor = settings.backgroundcolor
+        
+        self.world_engine = world.WorldEngine()
+        self.world_engine.load_world_from_memory()
+        self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
+        self.physics_engine = physics.Physics(self.world_engine)
+        
+        self.world_edit_mode = False
+        self.world_edit_current_block = 1
+        
+        self.debug_mode = True
 
     def draw(self):
-        self.screen.fill(self.backgroundcolor)
-        self.render_engine.blit_world()
+        self.screen.fill((settings.backgroundcolor))
+        self.render_engine.draw()
         
+        # self.render_engine.blit_element(assets.textureMap["test_entity"], self.physics_engine.entities[0].pos)
+
     def handle_keyinputs(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -25,14 +36,33 @@ class Game:
             elif event.type == pygame.KEYDOWN:
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
-                elif event.key == settings.keybinds["up"]:
-                    self.render_engine.camera_ofsett[1] -= 16
-                elif event.key == settings.keybinds["left"]:
-                    self.render_engine.camera_ofsett[0] -= 16
-                elif event.key == settings.keybinds["down"]:
-                    self.render_engine.camera_ofsett[1] += 16
-                elif event.key == settings.keybinds["right"]:
-                    self.render_engine.camera_ofsett[0] += 16
+                elif event.key in settings.keybinds["up"]:
+                    self.physics_engine.player.speed_y -= 1
+                elif event.key in settings.keybinds["left"]:
+                    self.physics_engine.player.speed_x -= 1
+                elif event.key in settings.keybinds["down"]:
+                    self.physics_engine.player.speed_y += 1
+                elif event.key in settings.keybinds["right"]:
+                    self.physics_engine.player.speed_x += 1
+            elif event.type == pygame.KEYUP:
+                if event.key == settings.keybinds["toggle_fullscreen"]:
+                    pygame.display.toggle_fullscreen()
+                elif event.key in settings.keybinds["up"]:
+                    self.physics_engine.player.speed_y += 1
+                elif event.key in settings.keybinds["left"]:
+                    self.physics_engine.player.speed_x += 1
+                elif event.key in settings.keybinds["down"]:
+                    self.physics_engine.player.speed_y -= 1
+                elif event.key in settings.keybinds["right"]:
+                    self.physics_engine.player.speed_x -= 1
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if self.world_edit_mode:
+                    if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
+                        self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
+                        return
+                    block_pos = self.render_engine.get_world_block_for_mouse_pos(mouse_pos)
+                    self.world_engine.set_block(block_pos, self.world_edit_current_block)
 
     def event_shutdown(self):
         self.world_engine.save_world_to_memory()
@@ -45,12 +75,13 @@ class Game:
 
     def __run(self):
         self.isRunning = True
-        clock = pygame.time.Clock()
         while self.isRunning:
             self.handle_keyinputs()
+            self.render_engine.camera_ofset = self.physics_engine.player.pos[0] - self.screen.get_width()/2, self.physics_engine.player.pos[1] -self.screen.get_height()/2
             self.draw()    
+            self.physics_engine.tick()
             pygame.display.flip()
-            clock.tick(self.framerate)
+            self.clock.tick(settings.framerate)
         self.event_shutdown()
 
 
