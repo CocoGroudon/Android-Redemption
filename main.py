@@ -80,7 +80,7 @@ class Game:
         self.isRunning = True
         while self.isRunning:
             self.handle_keyinputs()
-            self.render_engine.camera_ofset = -self.physics_engine.player.pos[0]+self.screen.get_width()//2, -self.physics_engine.player.pos[1]+self.screen.get_height()//2
+            self.render_engine.camera_ofset = -self.physics_engine.player.get_pos()[0]+self.screen.get_width()//2, -self.physics_engine.player.get_pos()[1]+self.screen.get_height()//2
             self.draw()    
             self.physics_engine.tick()
             pygame.display.flip()

@@ -21,16 +21,30 @@ class Physics:
         
         
 
-class Entity:
+class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple, image:pygame.image) -> None:
+        pygame.sprite.Sprite.__init__(self)
         self.world_engine = wordlengine_ref
-        self.pos = list(pos)
+        self.__pos = list(pos)
         self.size = size
-        self.image = image         
+        self.image = image    
+        self.update_rect
+             
+        
+    def update_rect(self):
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(self.__pos[0], self.__pos[1])
     
     def move(self, movement:tuple):
-        self.pos[0] += movement[0]
-        self.pos[1] += movement[1]
+        self.__pos[0] += movement[0]
+        self.__pos[1] += movement[1]
+        self.update_rect()
+        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group):
+            self.__pos[0] -= movement[0]
+            self.__pos[1] -= movement[1]
+            
+    def get_pos(self) -> tuple:
+        return self.__pos
             
 
 class Player(Entity):

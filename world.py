@@ -31,8 +31,11 @@ class WorldEngine:
         return self.world[block_position[0]][block_position[1]]
 
     def set_block(self, block_position:tuple[int, int], block_value: int) -> None:
-        self.world[block_position[0]][block_position[1]] = block_value
-        self.update_block_list()
+        try:
+            self.world[block_position[0]][block_position[1]] = block_value
+            self.update_block_list()
+        except IndexError:
+            print("Player placed block out of bounds!")
                 
     def refresh_block_group(self):
         self.block_sprite_group = pygame.sprite.Group()

@@ -52,15 +52,15 @@ class Renderer:
         fpsText = self.debug_font.render(f"FPS : {round(self.game.clock.get_fps(),3)}", False, 6)
         self.debug_screen.blit(fpsText, (0,0))
         for entityNr, entity in enumerate(self.game.physics_engine.entities):
-            entity_text = self.debug_font.render(f"Entity - Pos:{round(entity.pos[0], 2)}|{round(entity.pos[1], 2)}", False, 6)
+            entity_text = self.debug_font.render(f"Entity - Pos:{round(entity.get_pos()[0], 2)}|{round(entity.get_pos()[1], 2)}", False, 6)
             self.debug_screen.blit(entity_text, (0, 10 + 10*entityNr))
             
     def blit_entities(self):
         for entity in self.game.physics_engine.entities:
-            self.blit_element(entity.image, entity.pos)
+            self.blit_element(entity.image, entity.get_pos())
 
     def blit_player(self):
-        self.blit_element(self.game.physics_engine.player.image, self.game.physics_engine.player.pos)
+        self.blit_element(self.game.physics_engine.player.image, self.game.physics_engine.player.get_pos())
 
     def blit_element(self, element:pygame.surface or pygame.image, position:Tuple[int, int]) -> None:
         """ 
