@@ -31,6 +31,7 @@ class WorldEngine:
         return self.world[block_position[0]][block_position[1]]
 
     def set_block(self, block_position:tuple[int, int], block_value: int) -> None:
+        print(block_position)
         try:
             self.world[block_position[0]][block_position[1]] = block_value
             self.update_block_list()

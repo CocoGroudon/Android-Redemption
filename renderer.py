@@ -16,7 +16,7 @@ class Renderer:
     
         self.screen = self.game.screen
         
-        self.world_screen = pygame.Surface((6000, 6000), flags=pygame.SRCALPHA)
+        self.world_screen = pygame.Surface((settings.world_dimensions[0]*settings.blocksize, settings.world_dimensions[1]*settings.blocksize), flags=pygame.SRCALPHA)
         self.update_world_surface()
         
         self.debug_screen = pygame.Surface((300, 500), flags=pygame.SRCALPHA)
@@ -77,6 +77,10 @@ class Renderer:
         mouse_x //= settings.blocksize
         mouse_y //= settings.blocksize
         
+        # Keine Ahnung, warumm das da oben nicht automatisch in nen int macht, wenn es doch eh rundet
+        mouse_x = int(mouse_x)
+        mouse_y = int(mouse_y)
+        
         return mouse_x, mouse_y
         
     def block_choices_screen_update(self):
@@ -106,6 +110,12 @@ class Renderer:
 
         if cam_pos_x > 0:
             cam_pos_x = 0
+        elif cam_pos_x < -settings.world_dimensions[0]*settings.blocksize+self.screen.get_width():
+            cam_pos_x = -settings.world_dimensions[0]*settings.blocksize+self.screen.get_width()
+            
         if cam_pos_y > 0:
             cam_pos_y = 0
+        elif cam_pos_y < -settings.world_dimensions[1]*settings.blocksize+self.screen.get_height():
+            cam_pos_y = -settings.world_dimensions[1]*settings.blocksize+self.screen.get_height()
+            
         self.camera_ofset = cam_pos_x, cam_pos_y
