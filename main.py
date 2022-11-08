@@ -18,7 +18,7 @@ class Game:
         self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
         self.physics_engine = physics.Physics(self.world_engine)
         
-        self.world_edit_mode = False
+        self.world_edit_mode = True
         self.world_edit_current_block = 1
         
         self.debug_mode = True
@@ -77,7 +77,7 @@ class Game:
         self.isRunning = True
         while self.isRunning:
             self.handle_keyinputs()
-            self.render_engine.camera_ofset = self.physics_engine.player.pos[0] - self.screen.get_width()/2, self.physics_engine.player.pos[1] -self.screen.get_height()/2
+            self.render_engine.camera_ofset = -self.physics_engine.player.pos[0]+self.screen.get_width()//2, -self.physics_engine.player.pos[1]+self.screen.get_height()//2
             self.draw()    
             self.physics_engine.tick()
             pygame.display.flip()

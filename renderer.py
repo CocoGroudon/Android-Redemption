@@ -17,12 +17,14 @@ class Renderer:
     
         self.screen = self.game.screen
         
+        self.world_screen = pygame.Surface((6000, 6000), flags=pygame.SRCALPHA)
+        self.update_world_surface()
+        
         self.debug_screen = pygame.Surface((300, 500), flags=pygame.SRCALPHA)
         
         self.block_choices_screen = pygame.Surface((settings.blocksize, len(settings.block_choices)*settings.blocksize), flags=pygame.SRCALPHA)
         self.block_choices_screen_update()
 
-        
         
     
     def draw(self):
@@ -30,9 +32,6 @@ class Renderer:
         self.blit_world()
         self.blit_entities()
         self.blit_player()
-        
-        if settings.render_walls:
-            self.blit_walls()
         
         if self.game.world_edit_mode:
             self.screen.blit(self.block_choices_screen, settings.block_choices_screen_ofsett)
@@ -42,18 +41,12 @@ class Renderer:
             self.screen.blit(self.debug_screen, (10,10))
     
     def blit_world(self) -> None:
-        for block in self.wold_engine.block_list:
-            block_x = block[0][0]
-            block_y = block[0][1]
-            block_value = block[1]
-            
-            block_position = block_x*settings.blocksize-self.camera_ofset[0], block_y*settings.blocksize-self.camera_ofset[1]
-            self.screen.blit(assets.textureMap[block_value], block_position)
-
-    def blit_walls(self):
-        for wall in self.wold_engine.walls:
-            wall.draw(self.screen, self.camera_ofset)
-            
+        self.screen.blit(self.world_screen, self.camera_ofset)
+    
+    def update_world_surface(self):
+        self.world_screen.fill((0,0,0,0))
+        self.wold_engine.block_sprite_group.draw(self.world_screen)
+           
     def debu_menu_update(self):
         self.debug_screen.fill((0,0,0,0))
         fpsText = self.debug_font.render(f"FPS : {round(self.game.clock.get_fps(),3)}", False, 6)
@@ -74,13 +67,13 @@ class Renderer:
         !!! Die Position ist in Pixel und nicht in weltblöcken !!!
         Das Element wird an der Position korospondierend zu der Welt gerendert. 
         """
-        self.screen.blit(element, [a-b for a,b in zip(position,self.camera_ofset)])
+        self.screen.blit(element, [a+b for a,b in zip(position,self.camera_ofset)])
         
     def get_world_block_for_mouse_pos(self, mouse_pos:tuple) -> tuple:
         mouse_x, mouse_y = mouse_pos
         
-        mouse_x -= self.camera_ofset[0]
-        mouse_y -= self.camera_ofset[1]
+        mouse_x += self.camera_ofset[0]
+        mouse_y += self.camera_ofset[1]
         
         mouse_x //= settings.blocksize
         mouse_y //= settings.blocksize
