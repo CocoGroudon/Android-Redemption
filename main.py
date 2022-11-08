@@ -16,7 +16,7 @@ class Game:
         self.world_engine = world.WorldEngine()
         self.world_engine.load_world_from_memory()
         self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
-        self.physics_engine = physics.Physics(self.world_engine)
+        self.physics_engine = physics.Physics(self.world_engine, self)
         
         self.world_edit_mode = True
         self.world_edit_current_block = 1
@@ -37,24 +37,24 @@ class Game:
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
                 elif event.key in settings.keybinds["up"]:
-                    self.physics_engine.player.speed_y -= 1
+                    self.physics_engine.player.speed_y -= 128
                 elif event.key in settings.keybinds["left"]:
-                    self.physics_engine.player.speed_x -= 1
+                    self.physics_engine.player.speed_x -= 128
                 elif event.key in settings.keybinds["down"]:
-                    self.physics_engine.player.speed_y += 1
+                    self.physics_engine.player.speed_y += 128
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x += 1
+                    self.physics_engine.player.speed_x += 128
             elif event.type == pygame.KEYUP:
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
                 elif event.key in settings.keybinds["up"]:
-                    self.physics_engine.player.speed_y += 1
+                    self.physics_engine.player.speed_y += 128
                 elif event.key in settings.keybinds["left"]:
-                    self.physics_engine.player.speed_x += 1
+                    self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["down"]:
-                    self.physics_engine.player.speed_y -= 1
+                    self.physics_engine.player.speed_y -= 128
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x -= 1
+                    self.physics_engine.player.speed_x -= 128
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.world_edit_mode:

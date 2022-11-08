@@ -6,19 +6,23 @@ import assets
 import settings
 from world import WorldEngine
 
-
 class Physics:
-    def __init__(self, worldengine_ref:WorldEngine) -> None:
+    def __init__(self, worldengine_ref:WorldEngine, game_ref) -> None:
         self.world_engine = worldengine_ref
+        self.game = game_ref
+        
         self.entities: Entity = []
         self.entities.append(Entity(self.world_engine, (80,64), (16,16), assets.textureMap["test_entity"]))
         self.entities.append(Entity(self.world_engine, (40,40), (16,16), assets.textureMap["test_entity"]))
         self.player = Player(self.world_engine, (40,40), (32,64), assets.textureMap["player_entity"])
 
     def tick(self):
-        self.player.move((self.player.speed_x, self.player.speed_y))
+        fps = self.game.clock.get_fps()
+        if fps == 0: return
+        tick_lenght = 1/fps
+        self.player.move((self.player.speed_x*tick_lenght, self.player.speed_y*tick_lenght))
         for entity in self.entities:
-            entity.move((0.1, 0))
+            entity.move((32*tick_lenght, 0))
         
         
 
