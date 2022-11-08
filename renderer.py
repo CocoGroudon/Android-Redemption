@@ -1,4 +1,3 @@
-from typing import Tuple
 import pygame
 import math
 
@@ -62,7 +61,7 @@ class Renderer:
     def blit_player(self):
         self.blit_element(self.game.physics_engine.player.image, self.game.physics_engine.player.get_pos())
 
-    def blit_element(self, element:pygame.surface or pygame.image, position:Tuple[int, int]) -> None:
+    def blit_element(self, element:pygame.surface or pygame.image, position:tuple[int, int]) -> None:
         """ 
         !!! Die Position ist in Pixel und nicht in weltblöcken !!!
         Das Element wird an der Position korospondierend zu der Welt gerendert. 
@@ -101,3 +100,12 @@ class Renderer:
         clicked = self.block_choices_screen.get_rect().collidepoint(relateive_mouse_pos)
         print(clicked)
         return clicked
+    
+    def update_camera_pos(self, player_pos:tuple):
+        cam_pos_x, cam_pos_y = -player_pos[0]+self.screen.get_width()//2, -player_pos[1]+self.screen.get_height()//2
+
+        if cam_pos_x > 0:
+            cam_pos_x = 0
+        if cam_pos_y > 0:
+            cam_pos_y = 0
+        self.camera_ofset = cam_pos_x, cam_pos_y

@@ -25,7 +25,6 @@ class Physics:
             entity.move((32*tick_lenght, 0))
         
         
-
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, pos:tuple, size:tuple, image:pygame.image) -> None:
         pygame.sprite.Sprite.__init__(self)
@@ -47,7 +46,7 @@ class Entity(pygame.sprite.Sprite):
         if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group) and recursion_depth <10:
             self.__pos[0] -= movement[0]
             self.__pos[1] -= movement[1]
-            self.move((movement[0]-np.sign(movement[0]), movement[1]-np.sign(movement[1])), recursion_depth=recursion_depth+1)
+            # self.move((movement[0]-np.sign(movement[0]), movement[1]-np.sign(movement[1])), recursion_depth=recursion_depth+1)
             
     def get_pos(self) -> tuple:
         return self.__pos
