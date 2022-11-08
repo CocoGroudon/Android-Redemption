@@ -62,7 +62,10 @@ class Game:
                         self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
                         return
                     block_pos = self.render_engine.get_world_block_for_mouse_pos(mouse_pos)
+                    print(block_pos)
                     self.world_engine.set_block(block_pos, self.world_edit_current_block)
+                    self.world_engine.refresh_block_group()
+                    self.render_engine.update_world_surface()
 
     def event_shutdown(self):
         self.world_engine.save_world_to_memory()

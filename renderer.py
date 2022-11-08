@@ -72,8 +72,8 @@ class Renderer:
     def get_world_block_for_mouse_pos(self, mouse_pos:tuple) -> tuple:
         mouse_x, mouse_y = mouse_pos
         
-        mouse_x += self.camera_ofset[0]
-        mouse_y += self.camera_ofset[1]
+        mouse_x -= self.camera_ofset[0]
+        mouse_y -= self.camera_ofset[1]
         
         mouse_x //= settings.blocksize
         mouse_y //= settings.blocksize
