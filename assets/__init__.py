@@ -10,3 +10,8 @@ textureMap = {
     3 : pygame.image.load(Path(__file__).with_name('lava.png')),
     127 : pygame.image.load(Path(__file__).with_name('testtexture.png'))
 }
+
+
+texture_item = {
+    1 : pygame.image.load(Path(__file__).with_name('item_dirt.png')),
+}
