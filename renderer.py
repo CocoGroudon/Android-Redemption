@@ -31,6 +31,7 @@ class Renderer:
         self.blit_world()
         self.blit_entities()
         self.blit_player()
+        self.blit_player_inventory()
         
         if self.game.world_edit_mode:
             self.screen.blit(self.block_choices_screen, settings.block_choices_screen_ofsett)
@@ -60,6 +61,9 @@ class Renderer:
 
     def blit_player(self):
         self.blit_element(self.game.physics_engine.player.image, self.game.physics_engine.player.get_pos())
+
+    def blit_player_inventory(self):
+        self.blit_element(self.game.physics_engine.player.inventory.surface, self.game.physics_engine.player.get_pos())
 
     def blit_element(self, element:pygame.surface or pygame.image, position:tuple[int, int]) -> None:
         """ 
@@ -119,3 +123,4 @@ class Renderer:
             cam_pos_y = -settings.world_dimensions[1]*settings.blocksize+self.screen.get_height()
             
         self.camera_ofset = cam_pos_x, cam_pos_y
+        
