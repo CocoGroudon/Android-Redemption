@@ -1,6 +1,7 @@
 import pygame
 import math
 import numpy as np
+import time 
 
 import assets
 import settings
@@ -17,12 +18,27 @@ class Physics:
         self.player = Player(self.world_engine, (40,40), (32,64), assets.textureMap["player_entity"])
 
     def tick(self):
+        # Setup for Tick
         fps = self.game.clock.get_fps()
         if fps == 0: return
         tick_lenght = 1/fps
+
+
+        if self.player.key_jump and self.player.check_if_ground():
+            self.player.speed_y -= 128
+            self.player.key_jump = False
+        self.player.gravity()
+        self.player.move((0,self.player.grav_speed*tick_lenght) )
+
+
+
+
         self.player.move((self.player.speed_x*tick_lenght, self.player.speed_y*tick_lenght))
+        print(self.player.check_if_ground())
         for entity in self.entities:
             entity.move((32*tick_lenght, 0))
+        
+        
         
         
 class Entity(pygame.sprite.Sprite):
@@ -50,6 +66,16 @@ class Entity(pygame.sprite.Sprite):
             
     def get_pos(self) -> tuple:
         return self.__pos
+    
+    def check_if_ground(self) -> bool:
+        self.__pos[1] += 1
+        self.update_rect()
+        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group):
+            self.__pos[1] -= 1
+            return True
+        else:
+            self.__pos[1] -=1
+            return False
             
 
 class Player(Entity):
@@ -57,7 +83,21 @@ class Player(Entity):
         super().__init__(wordlengine_ref, pos, size, image)
         self.speed_x = 0
         self.speed_y = 0
+        self.key_jump = False
+        self.time_since_in_air = 0
+        self.grav_speed = 0
 
+    def gravity(self) -> int:
+        if not self.check_if_ground():
+            if self.time_since_in_air == 0:
+                self.time_since_in_air = time.time()
+            time_now = time.time()
+            grav_time = time_now - self.time_since_in_air
+            self.grav_speed = settings.grav_strenght **grav_time
+            print(self.grav_speed)
+        else:
+            self.time_since_in_air = 0
+        
     
 class Enemies(Entity):
      def __init__(self) -> None:

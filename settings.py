@@ -12,6 +12,9 @@ world_dimensions = (500, 100)
 
 # Physics
 entity_move_rays_ofsett = 0.01
+player_height = 64
+player_width = 32
+grav_strenght = 600
 
 # Renderer
 block_choices_screen_ofsett = (0,200)
@@ -19,7 +22,7 @@ block_choices = (0,1,2,3,127)
 render_walls = True
 
 keybinds = {
-    "up": [pygame.K_w, pygame.K_UP ],
+    "up": [pygame.K_SPACE, pygame.K_UP ],
     "left": [pygame.K_a, pygame.K_LEFT ],
     "down": [pygame.K_s, pygame.K_DOWN ],
     "right": [pygame.K_d, pygame.K_RIGHT ],
