@@ -27,24 +27,16 @@ class Physics:
         if settings.gravity:
             self.player.speed_y -= settings.grav_strenght*tick_lenght
             if res := self.player.check_if_ground():
-                self.player.grav_speed = 0
-            # self.player.move((0, self.player.grav_speed))
-            print(self.player.grav_speed, res, self.player.get_pos(), self.player.key_jump)
+                self.player.speed_y = 0
+            # print(self.player.speed_y, res, self.player.get_pos(), self.player.key_jump)
             
         
         if self.player.key_jump and self.player.check_if_ground():
-            self.player.speed_y -= 100
-            self.player.key_jump = False
-            print("jumped")
+            self.player.speed_y -= settings.player_jump_strength
             
-        # self.player.gravity()
-        # self.player.move((0,self.player.grav_speed*tick_lenght) )
 
-
-
-
-        self.player.move((self.player.speed_x*tick_lenght, self.player.speed_y*tick_lenght))
-        # print(self.player.check_if_ground())
+        self.player.move((0, self.player.speed_y*tick_lenght))
+        self.player.move((self.player.speed_x*tick_lenght, 0))
         for entity in self.entities:
             entity.move((32*tick_lenght, 0))
         
@@ -98,21 +90,8 @@ class Player(Entity):
         super().__init__(wordlengine_ref, pos, size, image)
         self.speed_x = 0
         self.speed_y = 0
-        self.key_jump = True
-        self.time_since_in_air = 0
-        self.grav_speed = 0
-
-    def gravity(self) -> int:
-        if not self.check_if_ground():
-            if self.time_since_in_air == 0:
-                self.time_since_in_air = time.time()
-            time_now = time.time()
-            grav_time = time_now - self.time_since_in_air
-            self.grav_speed = settings.grav_strenght **grav_time
-            print(self.grav_speed)
-        else:
-            self.time_since_in_air = 0
-        
+        self.key_jump = False
+        self.time_since_in_air = 0    
     
 class Enemies(Entity):
      def __init__(self) -> None:

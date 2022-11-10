@@ -14,8 +14,9 @@ world_dimensions = (500, 100)
 entity_move_rays_ofsett = 0.01
 player_height = 64
 player_width = 32
+player_jump_strength = 200
 gravity = True
-grav_strenght = -20
+grav_strenght = -200
 
 # Renderer
 block_choices_screen_ofsett = (0,200)
