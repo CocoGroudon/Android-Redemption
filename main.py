@@ -47,6 +47,7 @@ class Game:
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False
+                    
                 elif event.key in settings.keybinds["left"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["down"]:
