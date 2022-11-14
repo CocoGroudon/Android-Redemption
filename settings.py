@@ -12,6 +12,8 @@ world_dimensions = (500, 100)
 
 # Physics
 entity_move_rays_ofsett = 0.01
+projectile_speed = 100
+projectile_lifetime = 10
 player_height = 64
 player_width = 32
 player_jump_strength = 200
@@ -32,7 +34,8 @@ keybinds = {
     "left": [pygame.K_a, pygame.K_LEFT ],
     "down": [pygame.K_s, pygame.K_DOWN ],
     "right": [pygame.K_d, pygame.K_RIGHT ],
-    "toggle_fullscreen": pygame.K_F11
+    "toggle_fullscreen": pygame.K_F11,
+    "action": [pygame.K_1]
 }
 
 dictPath = os.path.dirname(Path(__file__))
