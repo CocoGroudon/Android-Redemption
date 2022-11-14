@@ -20,6 +20,7 @@ class Renderer:
         self.update_world_surface()
         
         self.debug_screen = pygame.Surface((300, 500), flags=pygame.SRCALPHA)
+        self.projectile_screen = pygame.Surface((settings.world_dimensions[0]*settings.blocksize, settings.world_dimensions[1]*settings.blocksize), flags=pygame.SRCALPHA)
         
         self.block_choices_screen = pygame.Surface((settings.blocksize, len(settings.block_choices)*settings.blocksize), flags=pygame.SRCALPHA)
         self.block_choices_screen_update()
@@ -32,6 +33,9 @@ class Renderer:
         self.blit_entities()
         self.blit_player()
         self.blit_player_inventory()
+        self.blit_projectiles()
+        
+        pygame.draw.line(self.screen, (255,255,255), self.get_screen_pos_for_world_pos(self.game.physics_engine.player.get_pos()), pygame.mouse.get_pos())
         
         if self.game.world_edit_mode:
             self.screen.blit(self.block_choices_screen, settings.block_choices_screen_ofsett)
@@ -65,6 +69,11 @@ class Renderer:
     def blit_player_inventory(self):
         self.blit_element(self.game.physics_engine.player.inventory.surface, self.game.physics_engine.player.get_pos())
 
+    def blit_projectiles(self):
+        self.projectile_screen.fill((0,0,0,0))
+        self.game.physics_engine.projectile_group.draw(self.projectile_screen)
+        self.screen.blit(self.projectile_screen, self.camera_ofset)
+
     def blit_element(self, element:pygame.surface or pygame.image, position:tuple[int, int]) -> None:
         """ 
         !!! Die Position ist in Pixel und nicht in weltblöcken !!!
@@ -86,6 +95,25 @@ class Renderer:
         mouse_y = int(mouse_y)
         
         return mouse_x, mouse_y
+        
+    def get_world_pos_for_mouse_pos(self, mouse_pos:tuple) -> tuple:
+        mouse_x, mouse_y = mouse_pos
+        
+        mouse_x -= self.camera_ofset[0]
+        mouse_y -= self.camera_ofset[1]
+        
+        return mouse_x, mouse_y
+    
+    def get_screen_pos_for_world_pos(self, world_pos:tuple) -> tuple:
+        player_x, player_y = world_pos
+        cam_ofset_x, cam_ofset_y = self.camera_ofset
+        
+        player_screen_x = player_x + cam_ofset_x
+        player_screen_y = player_y + cam_ofset_y
+        return player_screen_x, player_screen_y
+    
+    
+    
         
     def block_choices_screen_update(self):
         self.block_choices_screen.fill((0,0,0,0))

@@ -44,6 +44,8 @@ class Game:
                     self.physics_engine.player.speed_y += 128
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x += 128
+                elif event.key in settings.keybinds["action"]:
+                    self.physics_engine.player.key_shoot = True
             elif event.type == pygame.KEYUP:
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
