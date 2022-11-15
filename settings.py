@@ -11,28 +11,27 @@ world_name = "test"
 world_dimensions = (500, 100)
 
 # Physics
-entity_move_rays_ofsett = 0.01
-player_height = 64
-player_width = 32
+projectile_speed = 1000
+projectile_lifetime = 10
+
 player_jump_strength = 200
 gravity = True
-grav_strenght = -200
+grav_strenght = 200
 
 # Player
 inventory_size = (5,9)
 inventory_item_size = 8 # Pixel
-
 # Renderer
 block_choices_screen_ofsett = (0,200)
 block_choices = (0,1,2,3,127)
-render_walls = True
 
 keybinds = {
     "up": [pygame.K_SPACE, pygame.K_UP ],
     "left": [pygame.K_a, pygame.K_LEFT ],
     "down": [pygame.K_s, pygame.K_DOWN ],
     "right": [pygame.K_d, pygame.K_RIGHT ],
-    "toggle_fullscreen": pygame.K_F11
+    "toggle_fullscreen": pygame.K_F11,
+    "action": [pygame.K_1]
 }
 
 dictPath = os.path.dirname(Path(__file__))
