@@ -177,10 +177,14 @@ class Player(Entity):
         self.physics_engine.projectile_group.add(projectile)
         
     
-class Item:
-    def __init__(self, image) -> None:
+class Item(Entity):
+    def __init__(self, wordlengine_ref: WorldEngine, pos: tuple, size: tuple, image: pygame.image) -> None:
+        super().__init__(wordlengine_ref, pos, size, image)
         self.image = image
-          
+        self.pos = pos
+        self.size = size
+        self.image = image
+
             
 class Inventory:
     def __init__(self) -> None:
