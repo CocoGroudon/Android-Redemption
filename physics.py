@@ -241,6 +241,7 @@ class Inventory:
         self.__inventory_list[first_empty_line][first_empty_col] = item
         
         self.update_surface()
+        return True
         
     def remove_item(self, position:tuple) -> None:
         self.__inventory_list[position[0]][position[1]] = None
