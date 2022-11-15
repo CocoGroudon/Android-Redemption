@@ -36,6 +36,9 @@ class Physics:
             Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]),
             Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
         self.player = Player(self.world_engine, self, (40,40), (32,64), assets.textureMap["player_entity"])
+
+
+        self.items_group = pygame.sprite.Group()
         
     def tick(self):
         # Setup for Tick
@@ -46,6 +49,8 @@ class Physics:
         self.handle_player(tick_lenght)
         self.handle_entities(tick_lenght)
         self.handle_projectiles(tick_lenght)
+
+        self.collect_item()
 
     def handle_entities(self, tick_lenght):
         for entity in self.entity_group:
@@ -96,7 +101,19 @@ class Physics:
             if will_die: 
                 self.projectile_group.remove(projectile)
         
-        
+    def new_item(self):
+        item = Item(self.world_engine, self, (100, 100), (16,16), assets.textureMap["weed"])
+        self.entity_group.add(item)
+        self.items_group.add(item)
+
+    def collect_item(self):
+        for item in self.items_group:
+            if self.player.rect.colliderect(item.rect):
+                print("colliede with item")
+                self.player.inventory.add_item(item)
+                self.items_group.remove(item)
+                self.entity_group.remove(item)
+
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:
         pygame.sprite.Sprite.__init__(self)
@@ -178,12 +195,13 @@ class Player(Entity):
         
     
 class Item(Entity):
-    def __init__(self, wordlengine_ref: WorldEngine, pos: tuple, size: tuple, image: pygame.image) -> None:
-        super().__init__(wordlengine_ref, pos, size, image)
+    def __init__(self, wordlengine_ref: WorldEngine, physicsengine_ref, pos: tuple, size: tuple, image: pygame.image) -> None:
+        super().__init__(wordlengine_ref, physicsengine_ref, pos, size, image)
         self.image = image
         self.pos = pos
         self.size = size
         self.image = image
+    
 
             
 class Inventory:
@@ -244,7 +262,7 @@ class Projectile(pygame.sprite.Sprite):
         self.damage = damage
         self.time_of_spawn = time.time()
                 
-        self.image_normal = assets.textureMap["test_projectile"]
+        self.image_normal = assets.textureMap["projectile"]
         self.image = pygame.transform.rotate(self.image_normal, (math.degrees(self.angle)+180)*-1)
         self.rect = self.image.get_rect()
         

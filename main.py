@@ -41,7 +41,7 @@ class Game:
                 elif event.key in settings.keybinds["left"]:
                     self.physics_engine.player.speed_x -= 128
                 elif event.key in settings.keybinds["down"]:
-                    self.physics_engine.player.speed_y += 128
+                    self.physics_engine.new_item()
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
@@ -53,7 +53,7 @@ class Game:
                 elif event.key in settings.keybinds["left"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["down"]:
-                    self.physics_engine.player.speed_y -= 128
+                    pass
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x -= 128
             elif event.type == pygame.MOUSEBUTTONDOWN:
