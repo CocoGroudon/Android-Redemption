@@ -20,7 +20,7 @@ class Renderer:
         self.update_world_surface()
         
         self.debug_screen = pygame.Surface((300, 500), flags=pygame.SRCALPHA)
-        self.projectile_screen = pygame.Surface((settings.world_dimensions[0]*settings.blocksize, settings.world_dimensions[1]*settings.blocksize), flags=pygame.SRCALPHA)
+        self.screen_ofsettles = pygame.Surface((settings.world_dimensions[0]*settings.blocksize, settings.world_dimensions[1]*settings.blocksize), flags=pygame.SRCALPHA)
         
         self.block_choices_screen = pygame.Surface((settings.blocksize, len(settings.block_choices)*settings.blocksize), flags=pygame.SRCALPHA)
         self.block_choices_screen_update()
@@ -29,6 +29,7 @@ class Renderer:
     
     def draw(self):
         # self.screen.fill((0,0,0,0)) # Falls wir den Renderer Surface und den von dem Game trennen wollen
+        self.screen_ofsettles.fill((0,0,0,0))
         self.blit_world()
         self.blit_entities()
         self.blit_player()
@@ -55,13 +56,14 @@ class Renderer:
         self.debug_screen.fill((0,0,0,0))
         fpsText = self.debug_font.render(f"FPS : {round(self.game.clock.get_fps(),3)}", False, 6)
         self.debug_screen.blit(fpsText, (0,0))
-        for entityNr, entity in enumerate(self.game.physics_engine.entities):
-            entity_text = self.debug_font.render(f"Entity - Pos:{round(entity.get_pos()[0], 2)}|{round(entity.get_pos()[1], 2)}", False, 6)
-            self.debug_screen.blit(entity_text, (0, 10 + 10*entityNr))
+        # for entityNr, entity in enumerate(self.game.physics_engine.entities):
+        #     entity_text = self.debug_font.render(f"Entity - Pos:{round(entity.get_pos()[0], 2)}|{round(entity.get_pos()[1], 2)}", False, 6)
+        #     self.debug_screen.blit(entity_text, (0, 10 + 10*entityNr))
             
     def blit_entities(self):
-        for entity in self.game.physics_engine.entities:
-            self.blit_element(entity.image, entity.get_pos())
+        self.game.physics_engine.entity_group.draw(self.screen_ofsettles)
+        # for entity in self.game.physics_engine.entities:
+            # self.blit_element(entity.image, entity.get_pos())
 
     def blit_player(self):
         self.blit_element(self.game.physics_engine.player.image, self.game.physics_engine.player.get_pos())
@@ -70,9 +72,8 @@ class Renderer:
         self.blit_element(self.game.physics_engine.player.inventory.surface, self.game.physics_engine.player.get_pos())
 
     def blit_projectiles(self):
-        self.projectile_screen.fill((0,0,0,0))
-        self.game.physics_engine.projectile_group.draw(self.projectile_screen)
-        self.screen.blit(self.projectile_screen, self.camera_ofset)
+        self.game.physics_engine.projectile_group.draw(self.screen_ofsettles)
+        self.screen.blit(self.screen_ofsettles, self.camera_ofset)
 
     def blit_element(self, element:pygame.surface or pygame.image, position:tuple[int, int]) -> None:
         """ 

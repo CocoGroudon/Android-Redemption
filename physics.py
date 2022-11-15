@@ -30,12 +30,13 @@ class Physics:
         self.world_engine = worldengine_ref
         self.game = game_ref
         
-        self.entities: Entity = []
-        self.entities.append(Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]))
-        self.entities.append(Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
+        self.projectile_group = pygame.sprite.Group()
+        self.entity_group = pygame.sprite.Group()
+        self.entity_group.add(
+            Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]),
+            Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
         self.player = Player(self.world_engine, self, (40,40), (32,64), assets.textureMap["player_entity"])
         
-        self.projectile_group = pygame.sprite.Group()
 
     def tick(self):
         # Setup for Tick
@@ -43,36 +44,60 @@ class Physics:
         if fps == 0: return
         tick_lenght = 1/fps
 
-
-        if settings.gravity:
-            self.player.speed_y += settings.grav_strenght*tick_lenght
-            if res := self.player.check_if_ground():
-                self.player.speed_y = 0
-            # print(self.player.speed_y, res, self.player.get_pos(), self.player.key_jump)
-            
-        
-        if self.player.key_jump and self.player.check_if_ground():
-            self.player.speed_y -= settings.player_jump_strength
-            
-
-        self.player.move((0, self.player.speed_y*tick_lenght))
-        self.player.move((self.player.speed_x*tick_lenght, 0))
-        for entity in self.entities:
-            entity.move((32*tick_lenght, 0))
-            
+        self.handle_player(tick_lenght)
+        self.handle_entities(tick_lenght)
         self.handle_projectiles(tick_lenght)
 
+    def handle_entities(self, tick_lenght):
+        for entity in self.entity_group:
+            will_die = False
             
-    def handle_projectiles(self, tick_lenght:float):
-        for projectile in self.projectile_group:
-            if projectile.check_if_to_old():
-                self.projectile_group.remove(projectile)
-            projectile.move_forth(tick_lenght)
-            
+            entity.move((3*tick_lenght, 20*tick_lenght))
+                        
+            if entity.health.check_if_dead():
+                print("should die")
+                will_die = True
+                
+            if will_die:
+                self.entity_group.remove(entity)
+
+    def handle_player(self, tick_lenght):
         if self.player.key_shoot:
             angle = get_angle_to_world_pos(self.player.get_pos(), self.game.render_engine.get_world_pos_for_mouse_pos(pygame.mouse.get_pos()))
             self.player.shoot(angle)
             self.player.key_shoot = False
+            
+        if settings.gravity:
+            self.player.speed_y += settings.grav_strenght*tick_lenght
+            if self.player.check_if_ground():
+                self.player.speed_y = 0
+                
+        if self.player.key_jump and self.player.check_if_ground():
+            self.player.speed_y -= settings.player_jump_strength
+            
+        self.player.move((0, self.player.speed_y*tick_lenght))
+        self.player.move((self.player.speed_x*tick_lenght, 0))
+            
+    def handle_projectiles(self, tick_lenght:float):
+        for projectile in self.projectile_group:
+            projectile.move_forth(tick_lenght)
+            will_die = False
+            
+            for entity in self.entity_group:
+                if pygame.sprite.collide_rect(projectile, entity):
+                    entity.health.take_damage(projectile.damage)
+                    will_die = True
+            
+            if projectile.check_if_to_old(): 
+                will_die = True
+                
+            if pygame.sprite.spritecollideany(projectile, self.world_engine.block_sprite_group):
+                will_die = True
+            
+            if will_die: 
+                self.projectile_group.remove(projectile)
+            
+
         
         
         
@@ -84,7 +109,9 @@ class Entity(pygame.sprite.Sprite):
         self.__pos = list(pos)
         self.size = size
         self.image = image    
-        self.update_rect
+        self.update_rect()
+        self.health = Health_Bar(100)
+
              
         
     def update_rect(self):
@@ -104,15 +131,6 @@ class Entity(pygame.sprite.Sprite):
             self.__pos[0] -= movement[0]
             self.__pos[1] -= movement[1]
             self.move((movement[0]-np.sign(movement[0]), movement[1]-np.sign(movement[1])), recursion_depth=recursion_depth+1)
-            
-    def get_angle_to_world_pos(self, origin:tuple, destination:tuple) -> float:
-        '''
-        returned value is in arc tangent
-        '''
-        delta_x = origin[0]-destination[0]
-        delta_y = origin[1]-destination[1]
-        angle = math.atan2(delta_y, delta_x)
-        return angle
             
     def get_angle_to_world_pos(self, origin:tuple, destination:tuple) -> float:
         '''
@@ -159,7 +177,7 @@ class Player(Entity):
     def shoot(self, angle:float):
         '''creates a new standart projectile in the given direction \n
         angle *must* be given in radiants, else everythin gets scuffed'''
-        projectile = Projectile_Gravity(self, angle, self.get_pos()[:], settings.projectile_speed)
+        projectile = Projectile_Gravity(self, angle, self.get_pos()[:], settings.projectile_speed, 10)
         self.physics_engine.projectile_group.add(projectile)
         
     
@@ -216,11 +234,12 @@ class Inventory:
 
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''
-    def __init__(self, owner:Entity, angle:float, start_pos:tuple, speed:float) -> None:
+    def __init__(self, owner:Entity, angle:float, start_pos:tuple, speed:float, damage:float) -> None:
         pygame.sprite.Sprite.__init__(self=self)
         self.pos_x, self.pos_y = start_pos
         self.angle = angle
         self.speed = speed
+        self.damage = damage
         self.time_of_spawn = time.time()
                 
         self.image_normal = assets.textureMap["test_projectile"]
@@ -247,14 +266,32 @@ class Projectile(pygame.sprite.Sprite):
            
     
 class Projectile_Gravity(Projectile):  
-    def __init__(self, owner: Entity, angle: float, start_pos: tuple, speed: float) -> None:
-        super().__init__(owner, angle, start_pos, speed)
+    def __init__(self, owner: Entity, angle: float, start_pos: tuple, speed: float, damage:float) -> None:
+        super().__init__(owner, angle, start_pos, speed, damage)
         self.down_speed = 0
     
     def move_forth(self, tick_lenght:float):
         self.down_speed += settings.grav_strenght*tick_lenght
         self.pos_y += self.down_speed*tick_lenght
         return super().move_forth(tick_lenght)
+  
+class Health_Bar:
+    def __init__(self, max_Health:int) -> None:
+        self.max = max_Health
+        self.current = max_Health
+        
+    def take_damage(self, damage):
+        self.current -= damage
+    
+    def heal(self, healing):
+        self.current += healing
+        if self.current > self.max:
+            self.current = self.max
+            
+    def check_if_dead(self) -> bool:
+        if self.current <= 0:
+            return True
+        return False
     
 class Enemies(Entity):
      def __init__(self) -> None:
