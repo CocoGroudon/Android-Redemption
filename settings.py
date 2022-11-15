@@ -18,7 +18,7 @@ player_height = 64
 player_width = 32
 player_jump_strength = 200
 gravity = True
-grav_strenght = -200
+grav_strenght = 200
 
 # Player
 inventory_size = (5,9)

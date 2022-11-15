@@ -45,7 +45,7 @@ class Physics:
 
 
         if settings.gravity:
-            self.player.speed_y -= settings.grav_strenght*tick_lenght
+            self.player.speed_y += settings.grav_strenght*tick_lenght
             if res := self.player.check_if_ground():
                 self.player.speed_y = 0
             # print(self.player.speed_y, res, self.player.get_pos(), self.player.key_jump)
@@ -104,6 +104,15 @@ class Entity(pygame.sprite.Sprite):
             self.__pos[0] -= movement[0]
             self.__pos[1] -= movement[1]
             self.move((movement[0]-np.sign(movement[0]), movement[1]-np.sign(movement[1])), recursion_depth=recursion_depth+1)
+            
+    def get_angle_to_world_pos(self, origin:tuple, destination:tuple) -> float:
+        '''
+        returned value is in arc tangent
+        '''
+        delta_x = origin[0]-destination[0]
+        delta_y = origin[1]-destination[1]
+        angle = math.atan2(delta_y, delta_x)
+        return angle
             
     def get_angle_to_world_pos(self, origin:tuple, destination:tuple) -> float:
         '''
@@ -243,7 +252,7 @@ class Projectile_Gravity(Projectile):
         self.down_speed = 0
     
     def move_forth(self, tick_lenght:float):
-        self.down_speed += settings.gravity_strenght*tick_lenght
+        self.down_speed += settings.grav_strenght*tick_lenght
         self.pos_y += self.down_speed*tick_lenght
         return super().move_forth(tick_lenght)
     
