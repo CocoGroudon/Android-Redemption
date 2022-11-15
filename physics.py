@@ -110,9 +110,9 @@ class Physics:
         for item in self.items_group:
             if self.player.rect.colliderect(item.rect):
                 print("colliede with item")
-                self.player.inventory.add_item(item)
-                self.items_group.remove(item)
-                self.entity_group.remove(item)
+                if self.player.inventory.add_item(item):
+                    self.items_group.remove(item)
+                    self.entity_group.remove(item)
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:

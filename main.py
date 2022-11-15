@@ -1,6 +1,6 @@
 import pygame
 
-import assets
+import assets 
 import settings
 import world
 import renderer
