@@ -10,8 +10,6 @@ class Game:
     def __init__(self) -> None:
         self.screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
-        self.framerate = settings.framerate
-        self.backgroundcolor = settings.backgroundcolor
         
         self.world_engine = world.WorldEngine()
         self.world_engine.load_world_from_memory()
@@ -27,8 +25,7 @@ class Game:
         self.screen.fill((settings.backgroundcolor))
         self.render_engine.draw()
         
-        # self.render_engine.blit_element(assets.textureMap["test_entity"], self.physics_engine.entities[0].pos)
-
+        
     def handle_keyinputs(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
