@@ -34,7 +34,7 @@ keybinds = {
     "down": [pygame.K_s, pygame.K_DOWN ],
     "right": [pygame.K_d, pygame.K_RIGHT ],
     "toggle_fullscreen": pygame.K_F11,
-    "action": [pygame.K_1]
+    "action": [pygame.K_w]
 }
 
 dictPath = os.path.dirname(Path(__file__))
