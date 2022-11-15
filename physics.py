@@ -37,7 +37,6 @@ class Physics:
             Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
         self.player = Player(self.world_engine, self, (40,40), (32,64), assets.textureMap["player_entity"])
         
-
     def tick(self):
         # Setup for Tick
         fps = self.game.clock.get_fps()
@@ -96,9 +95,6 @@ class Physics:
             
             if will_die: 
                 self.projectile_group.remove(projectile)
-            
-
-        
         
         
 class Entity(pygame.sprite.Sprite):
@@ -184,6 +180,7 @@ class Player(Entity):
 class Item:
     def __init__(self, image) -> None:
         self.image = image
+          
             
 class Inventory:
     def __init__(self) -> None:
@@ -232,6 +229,7 @@ class Inventory:
                 if cell != None:
                     self.surface.blit(cell.image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
 
+
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''
     def __init__(self, owner:Entity, angle:float, start_pos:tuple, speed:float, damage:float) -> None:
@@ -262,9 +260,7 @@ class Projectile(pygame.sprite.Sprite):
             return True
         return False
 
-                    
-           
-    
+
 class Projectile_Gravity(Projectile):  
     def __init__(self, owner: Entity, angle: float, start_pos: tuple, speed: float, damage:float) -> None:
         super().__init__(owner, angle, start_pos, speed, damage)
@@ -274,6 +270,7 @@ class Projectile_Gravity(Projectile):
         self.down_speed += settings.grav_strenght*tick_lenght
         self.pos_y += self.down_speed*tick_lenght
         return super().move_forth(tick_lenght)
+  
   
 class Health_Bar:
     def __init__(self, max_Health:int) -> None:
@@ -292,8 +289,3 @@ class Health_Bar:
         if self.current <= 0:
             return True
         return False
-    
-class Enemies(Entity):
-     def __init__(self) -> None:
-        pass
-    

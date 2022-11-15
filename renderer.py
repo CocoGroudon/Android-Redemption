@@ -35,9 +35,7 @@ class Renderer:
         self.blit_player()
         self.blit_player_inventory()
         self.blit_projectiles()
-        
-        pygame.draw.line(self.screen, (255,255,255), self.get_screen_pos_for_world_pos(self.game.physics_engine.player.get_pos()), pygame.mouse.get_pos())
-        
+                
         if self.game.world_edit_mode:
             self.screen.blit(self.block_choices_screen, settings.block_choices_screen_ofsett)
         
