@@ -14,8 +14,7 @@ world_dimensions = (500, 100)
 entity_move_rays_ofsett = 0.01
 projectile_speed = 100
 projectile_lifetime = 10
-player_height = 64
-player_width = 32
+
 player_jump_strength = 200
 gravity = True
 grav_strenght = 200
@@ -23,7 +22,8 @@ grav_strenght = 200
 # Player
 inventory_size = (5,9)
 inventory_item_size = 8 # Pixel
-
+player_height = 50
+player_width = 25
 # Renderer
 block_choices_screen_ofsett = (0,200)
 block_choices = (0,1,2,3,127)
