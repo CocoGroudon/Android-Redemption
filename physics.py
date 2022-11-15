@@ -1,6 +1,7 @@
 import pygame
 import math
 import numpy as np
+import time 
 
 import assets
 import settings
@@ -17,12 +18,29 @@ class Physics:
         self.player = Player(self.world_engine, (40,40), (32,64), assets.textureMap["player_entity"])
 
     def tick(self):
+        # Setup for Tick
         fps = self.game.clock.get_fps()
         if fps == 0: return
         tick_lenght = 1/fps
-        self.player.move((self.player.speed_x*tick_lenght, self.player.speed_y*tick_lenght))
+
+
+        if settings.gravity:
+            self.player.speed_y -= settings.grav_strenght*tick_lenght
+            if res := self.player.check_if_ground():
+                self.player.speed_y = 0
+            # print(self.player.speed_y, res, self.player.get_pos(), self.player.key_jump)
+            
+        
+        if self.player.key_jump and self.player.check_if_ground():
+            self.player.speed_y -= settings.player_jump_strength
+            
+
+        self.player.move((0, self.player.speed_y*tick_lenght))
+        self.player.move((self.player.speed_x*tick_lenght, 0))
         for entity in self.entities:
             entity.move((32*tick_lenght, 0))
+        
+        
         
         
 class Entity(pygame.sprite.Sprite):
@@ -43,19 +61,37 @@ class Entity(pygame.sprite.Sprite):
         self.__pos[0] += movement[0]
         self.__pos[1] += movement[1]
         self.update_rect()
-        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group) and recursion_depth <10:
+        # print(recursion_depth)
+        if recursion_depth >= 50:
             self.__pos[0] -= movement[0]
             self.__pos[1] -= movement[1]
-            # self.move((movement[0]-np.sign(movement[0]), movement[1]-np.sign(movement[1])), recursion_depth=recursion_depth+1)
+            return
+        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group) and recursion_depth <50:
+            self.__pos[0] -= movement[0]
+            self.__pos[1] -= movement[1]
+            self.move((movement[0]-np.sign(movement[0]), movement[1]-np.sign(movement[1])), recursion_depth=recursion_depth+1)
             
     def get_pos(self) -> tuple:
         return self.__pos
+    
+    def check_if_ground(self) -> bool:
+        self.__pos[1] += 1
+        self.update_rect()
+        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group):
+            self.__pos[1] -= 1
+            return True
+        else:
+            self.__pos[1] -=1
+            return False
+            
 
 class Player(Entity):
     def __init__(self, wordlengine_ref: WorldEngine, pos: tuple, size: tuple, image: pygame.image) -> None:
         super().__init__(wordlengine_ref, pos, size, image)
         self.speed_x = 0
         self.speed_y = 0
+        self.key_jump = False
+        self.time_since_in_air = 0 
         self.inventory = Inventory()
     
 class Item:
@@ -109,7 +145,8 @@ class Inventory:
                 if cell != None:
                     self.surface.blit(cell.image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
 
-            
+                    
+           
     
 class Enemies(Entity):
      def __init__(self) -> None:
