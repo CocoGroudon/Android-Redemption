@@ -240,6 +240,8 @@ class Inventory:
         print(f"added {item=} at position {first_empty_line} | {first_empty_col}")
         self.__inventory_list[first_empty_line][first_empty_col] = item
         
+        self.update_surface()
+        
     def remove_item(self, position:tuple) -> None:
         self.__inventory_list[position[0]][position[1]] = None
                 
