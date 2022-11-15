@@ -56,13 +56,15 @@ class Renderer:
             
     def blit_entities(self):
         self.game.physics_engine.entity_group.draw(self.screen_ofsettles)
+        for entity in self.game.physics_engine.entity_group:
+            self.screen_ofsettles.blit(entity.health.get_screen(), entity.rect.topleft)
 
     def blit_player(self):
         self.blit_element(self.game.physics_engine.player.image, self.game.physics_engine.player.get_pos())
+        self.screen_ofsettles.blit(self.game.physics_engine.player.health.get_screen(), self.game.physics_engine.player.rect.topleft)
 
     def blit_player_inventory(self):
         self.blit_element(self.game.physics_engine.player.inventory.surface, self.game.physics_engine.player.get_pos())
-        self.blit_element(self.game.physics_engine.player.health.get_screen(), self.game.physics_engine.player.get_pos())
 
     def blit_projectiles(self):
         self.game.physics_engine.projectile_group.draw(self.screen_ofsettles)

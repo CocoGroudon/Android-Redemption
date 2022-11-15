@@ -276,6 +276,7 @@ class Health_Bar:
     def __init__(self, max_Health:int, current_health:int = 0) -> None:
         self.max = max_Health
         self.image = assets.textureMap["heart"]
+        self.image = pygame.transform.scale(self.image, (4,4))
         if current_health == 0:
             self.current = max_Health
         else:
@@ -298,6 +299,6 @@ class Health_Bar:
         image_value_life_poins = 10
         images = self.max/image_value_life_poins
         screen = pygame.Surface((self.image.get_width()*images, self.image.get_height()), flags=pygame.SRCALPHA)
-        for x in range(math.ceil(images)):
+        for x in range(self.current//image_value_life_poins):
             screen.blit(self.image, (x*self.image.get_width(), 0))
         return screen
