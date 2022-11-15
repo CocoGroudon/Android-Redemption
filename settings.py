@@ -14,6 +14,9 @@ world_dimensions = (500, 100)
 entity_move_rays_ofsett = 0.01
 projectile_speed = 100
 projectile_lifetime = 10
+# Temp ( soll wenn gravity gemerged wird weg)
+gravity_strenght = 200
+
 
 # Player
 inventory_size = (5,9)

@@ -52,7 +52,7 @@ class Physics:
         for projectile in self.projectile_group:
             if projectile.check_if_to_old():
                 self.projectile_group.remove(projectile)
-            projectile.move_forth(settings.projectile_speed*tick_lenght)
+            projectile.move_forth(tick_lenght)
             
         if self.player.key_shoot:
             angle = get_angle_to_world_pos(self.player.get_pos(), self.game.render_engine.get_world_pos_for_mouse_pos(pygame.mouse.get_pos()))
@@ -106,7 +106,7 @@ class Player(Entity):
     def shoot(self, angle:float):
         '''creates a new standart projectile in the given direction \n
         angle *must* be given in radiants, else everythin gets scuffed'''
-        projectile = Projectile(self, angle, self.get_pos()[:])
+        projectile = Projectile_Gravity(self, angle, self.get_pos()[:], settings.projectile_speed)
         self.physics_engine.projectile_group.add(projectile)
         
     
@@ -163,28 +163,25 @@ class Inventory:
 
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''
-    def __init__(self, owner:Entity, angle:float, start_pos:tuple) -> None:
+    def __init__(self, owner:Entity, angle:float, start_pos:tuple, speed:float) -> None:
         pygame.sprite.Sprite.__init__(self=self)
-        self.starting_pos = start_pos
-        self.pos = start_pos
+        self.pos_x, self.pos_y = start_pos
         self.angle = angle
+        self.speed = speed
         self.time_of_spawn = time.time()
                 
         self.image_normal = assets.textureMap["test_projectile"]
-        self.image_rotated = pygame.transform.rotate(self.image_normal, (math.degrees(self.angle)+180)*-1)
+        self.image = pygame.transform.rotate(self.image_normal, (math.degrees(self.angle)+180)*-1)
+        self.rect = self.image.get_rect()
         
-        self.rect = self.image_rotated.get_rect()
-        self.dist_traveled = 0
-        
-    def move_forth(self, dist:float):
+    def move_forth(self, tick_lenght:float):
         '''Advances the projectile Position the distance'''
-        self.dist_traveled += dist
-        new_x = self.starting_pos[0]+self.dist_traveled*math.cos(self.angle)
-        new_y = self.starting_pos[1]+self.dist_traveled*math.sin(self.angle)
+        dist = self.speed*tick_lenght
+        self.pos_x += dist*math.cos(self.angle)
+        self.pos_y += dist*math.sin(self.angle)
 
-        self.pos = new_x, new_y
-        self.rect = self.image_rotated.get_rect()
-        self.rect = self.rect.move(self.pos[0], self.pos[1])
+        self.rect = self.image.get_rect()
+        self.rect = self.rect.move(self.pos_x, self.pos_y)
         
     def check_if_to_old(self) -> bool:
         ''' Returns weather the Sprite is older then the specified "projectile_lifetime" in settings '''
@@ -192,6 +189,16 @@ class Projectile(pygame.sprite.Sprite):
         if existence_time > settings.projectile_lifetime:
             return True
         return False
+    
+class Projectile_Gravity(Projectile):  
+    def __init__(self, owner: Entity, angle: float, start_pos: tuple, speed: float) -> None:
+        super().__init__(owner, angle, start_pos, speed)
+        self.down_speed = 0
+    
+    def move_forth(self, tick_lenght:float):
+        self.down_speed += settings.gravity_strenght*tick_lenght
+        self.pos_y += self.down_speed*tick_lenght
+        return super().move_forth(tick_lenght)
     
 class Enemies(Entity):
      def __init__(self) -> None:
