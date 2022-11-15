@@ -101,6 +101,12 @@ class Physics:
             if will_die: 
                 self.projectile_group.remove(projectile)
         
+    def create_item(self, item)-> bool :
+        # item = Item(self.world_engine, self, (100, 100), (16,16), assets.textureMap["weed"])
+        self.entity_group.add(item)
+        self.items_group.add(item)
+
+        
     def new_item(self):
         item = Item(self.world_engine, self, (100, 100), (16,16), assets.textureMap["weed"])
         self.entity_group.add(item)
@@ -113,6 +119,23 @@ class Physics:
                 if self.player.inventory.add_item(item):
                     self.items_group.remove(item)
                     self.entity_group.remove(item)
+    def discard_item(self):
+        item_pos = (0, 0)
+        item = self.player.inventory.get_item(item_pos)
+        print("Das ist das item" + str(item) )
+        if item != None:
+            self.create_item(item)
+            self.player.inventory.remove_item(item_pos)
+            
+            self.player.inventory.update_surface()
+            print(item)
+        else: 
+            if item_pos[0] > 5:
+                print("ITEM_pos unter Null")
+                item_pos[0] += 1
+            elif item_pos[1] > 9:
+                item_pos[1] += 1
+            
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:

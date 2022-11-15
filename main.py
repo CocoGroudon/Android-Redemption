@@ -42,6 +42,7 @@ class Game:
                     self.physics_engine.player.speed_x -= 128
                 elif event.key in settings.keybinds["down"]:
                     self.physics_engine.new_item()
+                    self.physics_engine.discard_item()
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
