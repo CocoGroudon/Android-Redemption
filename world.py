@@ -58,10 +58,7 @@ class WorldEngine:
 class Block_Sprite(pygame.sprite.Sprite):
     def __init__(self, value:int, pos:tuple) -> None:
         pygame.sprite.Sprite.__init__(self=self)
-        # self.width = settings.blocksize
-        # self.height = settings.blocksize
-        
-        
+      
         self.image = assets.textureMap[value]
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(pos[0]*settings.blocksize, pos[1]*settings.blocksize)
