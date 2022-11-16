@@ -119,15 +119,18 @@ class Physics:
                 if self.player.inventory.add_item(item):
                     self.items_group.remove(item)
                     self.entity_group.remove(item)
+
     def discard_item(self):
         item_pos = (0, 0)
         item = self.player.inventory.get_item(item_pos)
+        item_remove = True
         print("Das ist das item" + str(item) )
         if item != None:
             self.create_item(item)
             self.player.inventory.remove_item(item_pos)
             
             self.player.inventory.update_surface()
+            item_remove = False
             print(item)
         else: 
             if item_pos[0] > 5:
@@ -135,7 +138,7 @@ class Physics:
                 item_pos[0] += 1
             elif item_pos[1] > 9:
                 item_pos[1] += 1
-            
+        
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:
@@ -268,6 +271,7 @@ class Inventory:
         
     def remove_item(self, position:tuple) -> None:
         self.__inventory_list[position[0]][position[1]] = None
+        self.update_surface()
                 
     def update_surface(self):
         """ refreshes the surface / image of the Inventory """
