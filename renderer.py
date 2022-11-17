@@ -3,11 +3,10 @@ import math
 
 import settings
 import assets
-from main import Game
 from world import WorldEngine
 
 class Renderer:
-    def __init__(self,* , game_engine_ref:Game ,world_engine_ref:WorldEngine) -> None:
+    def __init__(self,* , game_engine_ref ,world_engine_ref:WorldEngine) -> None:
         self.game = game_engine_ref
         self.wold_engine = world_engine_ref
         self.camera_ofset = [0,0]
@@ -20,13 +19,11 @@ class Renderer:
         self.update_world_surface()
         
         self.debug_screen = pygame.Surface((300, 500), flags=pygame.SRCALPHA)
-        self.screen_ofsettles = pygame.Surface((settings.world_dimensions[0]*settings.blocksize, settings.world_dimensions[1]*settings.blocksize), flags=pygame.SRCALPHA)
         
         self.block_choices_screen = pygame.Surface((settings.blocksize, len(settings.block_choices)*settings.blocksize), flags=pygame.SRCALPHA)
         self.block_choices_screen_update()
 
     def draw(self):
-        self.screen_ofsettles.fill((0,0,0,0))
         self.blit_world()
         self.blit_entities()
         self.blit_player()
@@ -40,9 +37,7 @@ class Renderer:
             self.debu_menu_update()
             self.screen.blit(self.debug_screen, (10,10))
             
-        self.screen.blit(self.screen_ofsettles, self.camera_ofset)
-    
-    def blit_world(self) -> None:
+    def blit_world(self):
         self.screen.blit(self.world_screen, self.camera_ofset)
     
     def update_world_surface(self):
@@ -55,26 +50,30 @@ class Renderer:
         self.debug_screen.blit(fpsText, (0,0))
             
     def blit_entities(self):
-        self.game.physics_engine.entity_group.draw(self.screen_ofsettles)
         for entity in self.game.physics_engine.entity_group:
-            self.screen_ofsettles.blit(entity.health.get_screen(), entity.rect.topleft)
-
+            self.blit_sprite(entity)
+            self.blit_element_rect(entity.health.get_screen(), entity.rect)
+        
     def blit_player(self):
-        self.blit_element(self.game.physics_engine.player.image, self.game.physics_engine.player.get_pos())
-        self.screen_ofsettles.blit(self.game.physics_engine.player.health.get_screen(), self.game.physics_engine.player.rect.topleft)
+        ''' blits player and healt screen of player'''
+        self.blit_sprite(self.game.physics_engine.player)
+        self.blit_element_rect(self.game.physics_engine.player.health.get_screen(), self.game.physics_engine.player.rect)
 
     def blit_player_inventory(self):
-        self.blit_element(self.game.physics_engine.player.inventory.surface, self.game.physics_engine.player.get_pos())
+        self.blit_element_rect(self.game.physics_engine.player.inventory.surface, self.game.physics_engine.player.rect)
 
     def blit_projectiles(self):
-        self.game.physics_engine.projectile_group.draw(self.screen_ofsettles)
+        for projectile in self.game.physics_engine.projectile_group:
+            self.blit_sprite(projectile)
 
-    def blit_element(self, element:pygame.surface or pygame.image, position:tuple[int, int]) -> None:
-        """ 
-        !!! Die Position ist in Pixel und nicht in weltblöcken !!!
-        Das Element wird an der Position korospondierend zu der Welt gerendert. 
-        """
-        self.screen.blit(element, [a+b for a,b in zip(position,self.camera_ofset)])
+    def blit_sprite(self, sprite:pygame.sprite.Sprite):
+        ''' Blits a pygame sprite with its self.image and self.rect atribute'''
+        self.screen.blit(sprite.image, sprite.rect.move(self.camera_ofset))
+
+    def blit_element_rect(self, image:pygame.Surface, rect:pygame.Rect):
+        ''' !!!  If possible use "blit_sprite"  !!! \n
+        blits an image at a rect position'''
+        self.screen.blit(image, rect.move(self.camera_ofset))
         
     def get_world_block_for_mouse_pos(self, mouse_pos:tuple) -> tuple:
         mouse_x, mouse_y = mouse_pos
