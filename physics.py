@@ -187,6 +187,7 @@ class Inventory:
         self.__inventory_list:Item = [[None for j in range(settings.inventory_size[0])] for i in range(settings.inventory_size[1])]
         self.surface = pygame.Surface((settings.inventory_size[0]*settings.inventory_item_size, settings.inventory_size[1]*settings.inventory_item_size), flags=pygame.SRCALPHA)
         self.update_surface()
+        self.hand = (0,0) # place in Inventory      
         
     def __get_first_empty_in_list(self, list:list) -> int:
         """ 
