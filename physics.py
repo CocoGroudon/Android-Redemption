@@ -218,6 +218,7 @@ class Inventory:
         
         print(f"added {item=} at position {first_empty_line} | {first_empty_col}")
         self.__inventory_list[first_empty_line][first_empty_col] = item
+        self.update_surface()
         
     def remove_item(self, position:tuple) -> None:
         self.__inventory_list[position[0]][position[1]] = None
@@ -230,6 +231,8 @@ class Inventory:
                 if cell != None:
                     self.surface.blit(cell.image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
 
+    def get_item_list(self) -> list:
+        return self.__inventory_list
 
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''

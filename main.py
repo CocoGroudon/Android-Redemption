@@ -88,7 +88,7 @@ class Game:
 
 def main():
     game = Game()
-    game.physics_engine.player.inventory.add_item(physics.Item(assets.textureMap[1]))
+    game.physics_engine.player.inventory.add_item(physics.Item(assets.texture_item[1]))
     game.run()
 
 if __name__ == "__main__":

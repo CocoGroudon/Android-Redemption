@@ -5,6 +5,9 @@ import settings
 import assets
 from world import WorldEngine
 
+if __name__ == "": # nur für Autocomplete, hat keinen Grund
+    from main import Game
+
 class Renderer:
     def __init__(self,* , game_engine_ref ,world_engine_ref:WorldEngine) -> None:
         self.game = game_engine_ref
@@ -60,7 +63,10 @@ class Renderer:
         self.blit_element_rect(self.game.physics_engine.player.health.get_screen(), self.game.physics_engine.player.rect)
 
     def blit_player_inventory(self):
-        self.blit_element_rect(self.game.physics_engine.player.inventory.surface, self.game.physics_engine.player.rect)
+        inventory = self.game.physics_engine.player.inventory
+        inv_screen_x = self.screen.get_width() - inventory.surface.get_width()
+        inv_screen_y = self.screen.get_height() - inventory.surface.get_height()
+        self.screen.blit(inventory.surface, (inv_screen_x, inv_screen_y))
         if hand_img := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):
             self.blit_element_rect(hand_img.image, self.game.physics_engine.player.rect)
 
