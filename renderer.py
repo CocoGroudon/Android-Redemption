@@ -61,7 +61,8 @@ class Renderer:
 
     def blit_player_inventory(self):
         self.blit_element_rect(self.game.physics_engine.player.inventory.surface, self.game.physics_engine.player.rect)
-        self.blit_element_rect(self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand), self.game.physics_engine.player.rect)
+        if hand_img := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):
+            self.blit_element_rect(hand_img.image, self.game.physics_engine.player.rect)
 
     def blit_projectiles(self):
         for projectile in self.game.physics_engine.projectile_group:
