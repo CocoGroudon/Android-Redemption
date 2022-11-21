@@ -64,6 +64,8 @@ class Game:
                     self.world_engine.set_block(block_pos, self.world_edit_current_block)
                     self.world_engine.refresh_block_group()
                     self.render_engine.update_world_surface()
+                if self.render_engine.inventory_get_clicked(mouse_pos):
+                    self.physics_engine.player.inventory.hand = self.render_engine.inventory_get_clicked_pos(mouse_pos)
 
     def event_shutdown(self):
         self.world_engine.save_world_to_memory()
@@ -89,6 +91,10 @@ class Game:
 def main():
     game = Game()
     game.physics_engine.player.inventory.add_item(physics.Item(assets.texture_item[1]))
+    game.physics_engine.player.inventory.add_item(physics.Item(assets.textureMap[2]))
+    game.physics_engine.player.inventory.add_item(physics.Item(assets.textureMap[3]))
+    game.physics_engine.player.inventory.add_item(physics.Item(assets.textureMap[127]))
+    print(game.physics_engine.player.inventory.get_item_list())
     game.run()
 
 if __name__ == "__main__":

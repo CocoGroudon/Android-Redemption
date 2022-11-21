@@ -67,9 +67,9 @@ class Renderer:
         inv_screen_x = self.screen.get_width() - inventory.surface.get_width()
         inv_screen_y = self.screen.get_height() - inventory.surface.get_height()
         self.screen.blit(inventory.surface, (inv_screen_x, inv_screen_y))
-        if hand_img := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):
-            self.blit_element_rect(hand_img.image, self.game.physics_engine.player.rect)
-
+        if hand_item := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):
+            rect_pos = self.game.physics_engine.player.rect.center
+            self.screen.blit(hand_item.image, (rect_pos[0]+self.camera_ofset[0], rect_pos[1]+self.camera_ofset[1]))
     def blit_projectiles(self):
         for projectile in self.game.physics_engine.projectile_group:
             self.blit_sprite(projectile)
@@ -123,7 +123,28 @@ class Renderer:
         pygame.draw.line(self.block_choices_screen, (255,255,255), (0,settings.blocksize*len(settings.block_choices)-1), (settings.blocksize-1,settings.blocksize*len(settings.block_choices)-1))
         pygame.draw.line(self.block_choices_screen, (255,255,255), (settings.blocksize-1,0), (settings.blocksize-1,settings.blocksize*len(settings.block_choices)-1))
             
-    def block_choices_screen_get_clicked(self, mouse_pos:tuple):
+    def inventory_get_clicked(self, mouse_pos:tuple) -> tuple:
+        inventory = self.game.physics_engine.player.inventory
+        inv_screen_x = self.screen.get_width() - inventory.surface.get_width()
+        inv_screen_y = self.screen.get_height() - inventory.surface.get_height()
+        ofset = inv_screen_x, inv_screen_y
+        relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, ofset)]
+        clicked = self.game.physics_engine.player.inventory.surface.get_rect().collidepoint(relateive_mouse_pos)
+        return clicked
+        
+    def inventory_get_clicked_pos(self, mouse_pos:tuple) -> tuple:
+        inventory = self.game.physics_engine.player.inventory
+        inv_screen_x = self.screen.get_width() - inventory.surface.get_width()
+        inv_screen_y = self.screen.get_height() - inventory.surface.get_height()
+        ofset = inv_screen_x, inv_screen_y
+        relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, ofset)]
+        
+        block_x = math.floor(relateive_mouse_pos[1] / settings.inventory_item_size)
+        block_y = math.floor(relateive_mouse_pos[0] / settings.inventory_item_size)
+        print(f"{relateive_mouse_pos=} , {block_x=} {block_y=}")
+        return block_x, block_y
+        
+    def block_choices_screen_get_clicked(self, mouse_pos:tuple):        
         relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, settings.block_choices_screen_ofsett)]
         block = math.floor(relateive_mouse_pos[1] / settings.blocksize)
         print(f"{relateive_mouse_pos=} , {block=}")
