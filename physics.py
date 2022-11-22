@@ -180,7 +180,11 @@ class Player(Entity):
 class Item:
     def __init__(self, image, action:callable = None) -> None:
         self.image = image
-        if action: self.action = action
+        if action: 
+            self.action = action 
+        else: 
+            self.action = False
+
           
             
 class Inventory:
@@ -231,6 +235,12 @@ class Inventory:
             for line_index, cell in enumerate(line):
                 if cell != None:
                     self.surface.blit(cell.image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
+
+        size_x = settings.inventory_size[0]*settings.inventory_scale*settings.inventory_item_size
+        size_y = settings.inventory_size[1]*settings.inventory_scale*settings.inventory_item_size
+        self.big_surface = pygame.transform.smoothscale(self.surface, (size_x, size_y))
+        self.big_surface.convert_alpha(self.big_surface)
+        print("updated inventory surface")
 
     def get_item_list(self) -> list:
         return self.__inventory_list

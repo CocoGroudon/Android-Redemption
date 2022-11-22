@@ -17,9 +17,8 @@ class Game:
         self.physics_engine = physics.Physics(self.world_engine, self)
         
         self.world_edit_mode = True
-        self.world_edit_current_block = 1
-        
         self.debug_mode = True
+        self.world_edit_current_block = 1        
 
     def draw(self):
         self.screen.fill((settings.backgroundcolor))
@@ -37,49 +36,44 @@ class Game:
                     self.physics_engine.player.key_jump = True
                 elif event.key in settings.keybinds["left"]:
                     self.physics_engine.player.speed_x -= 128
-                elif event.key in settings.keybinds["down"]:
-                    self.physics_engine.player.speed_y += 128
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
                     self.physics_engine.player.key_shoot = True
+                elif event.key in settings.keybinds["inventory"]:
+                    self.render_engine.inventory_show = not self.render_engine.inventory_show  
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False
-                    
                 elif event.key in settings.keybinds["left"]:
                     self.physics_engine.player.speed_x += 128
-                elif event.key in settings.keybinds["down"]:
-                    self.physics_engine.player.speed_y -= 128
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x -= 128
+                    self.physics_engine.player.speed_x -= 128  
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                # if self.world_edit_mode:
-                #     if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
-                #         self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
-                #         return
-                #     block_pos = self.render_engine.get_world_block_for_mouse_pos(mouse_pos)
-                #     print(block_pos)
-                #     self.world_engine.set_block(block_pos, self.world_edit_current_block)
-                #     self.world_engine.refresh_block_group()
-                #     self.render_engine.update_world_surface()
-                # if self.render_engine.inventory_get_clicked(mouse_pos):
-                #     self.physics_engine.player.inventory.hand = self.render_engine.inventory_get_clicked_pos(mouse_pos)
                 hand_item = self.physics_engine.player.inventory.get_item(self.physics_engine.player.inventory.hand)
-                if hand_item.action:
+                
+                if self.render_engine.inventory_get_clicked(mouse_pos) and self.render_engine.inventory_show:
+                    self.physics_engine.player.inventory.hand = self.render_engine.inventory_get_clicked_pos(mouse_pos)
+                elif hand_item and hand_item.action:
                     hand_item.action(self.physics_engine.player)
+                elif self.world_edit_mode:
+                    if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
+                        self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
+                        return
+                    block_pos = self.render_engine.get_world_block_for_mouse_pos(mouse_pos)
+                    print(block_pos)
+                    self.world_engine.set_block(block_pos, self.world_edit_current_block)
+                    self.world_engine.refresh_block_group()
+                    self.render_engine.update_world_surface()
 
     def event_shutdown(self):
         self.world_engine.save_world_to_memory()
 
-    def run(self):
-        self.__run()
-
     def stop(self):
         self.isRunning = False
 
-    def __run(self):
+    def run(self):
         self.isRunning = True
         while self.isRunning:
             self.handle_keyinputs()

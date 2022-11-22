@@ -5,8 +5,6 @@ import settings
 import assets
 from world import WorldEngine
 
-if __name__ == "": # nur für Autocomplete, hat keinen Grund
-    from main import Game
 
 class Renderer:
     def __init__(self,* , game_engine_ref ,world_engine_ref:WorldEngine) -> None:
@@ -15,6 +13,7 @@ class Renderer:
         self.camera_ofset = [0,0]
         pygame.font.init()
         self.debug_font = pygame.font.SysFont("Calibri", 15)
+        self.inventory_show = False
     
         self.screen = self.game.screen
         
@@ -63,21 +62,15 @@ class Renderer:
         self.blit_element_rect(self.game.physics_engine.player.health.get_screen(), self.game.physics_engine.player.rect)
 
     def blit_player_inventory(self):
-        inventory = self.game.physics_engine.player.inventory
-        inv_screen_x = self.screen.get_width()/2 - inventory.surface.get_width()
-        inv_screen_y = self.screen.get_height() - inventory.surface.get_height()
-        self.screen.blit(inventory.surface, (inv_screen_x, inv_screen_y))
         if hand_item := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):
             rect_pos = self.game.physics_engine.player.rect.center
             self.screen.blit(hand_item.image, (rect_pos[0]+self.camera_ofset[0], rect_pos[1]+self.camera_ofset[1]))
-        self.blit_inventory_full()
+        if self.inventory_show:
+            self.blit_inventory_full()
             
     def blit_inventory_full(self):
-        inventory = self.game.physics_engine.player.inventory
-        surface = pygame.transform.smoothscale(inventory.surface, (80,80))
-        inv_screen_x = (self.screen.get_width() - inventory.surface.get_width())/8
-        inv_screen_y = (self.screen.get_height() - inventory.surface.get_height())/8
-        self.screen.blit(surface, (inv_screen_x, inv_screen_y))
+        ofset = self.inventory_get_ofsettt()
+        self.screen.blit(self.game.physics_engine.player.inventory.big_surface, ofset)
 
             
     def blit_projectiles(self):
@@ -134,25 +127,30 @@ class Renderer:
         pygame.draw.line(self.block_choices_screen, (255,255,255), (settings.blocksize-1,0), (settings.blocksize-1,settings.blocksize*len(settings.block_choices)-1))
             
     def inventory_get_clicked(self, mouse_pos:tuple) -> tuple:
-        inventory = self.game.physics_engine.player.inventory
-        inv_screen_x = self.screen.get_width() - inventory.surface.get_width()
-        inv_screen_y = self.screen.get_height() - inventory.surface.get_height()
-        ofset = inv_screen_x, inv_screen_y
+        ofset = self.inventory_get_ofsettt()
         relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, ofset)]
-        clicked = self.game.physics_engine.player.inventory.surface.get_rect().collidepoint(relateive_mouse_pos)
+        clicked = self.game.physics_engine.player.inventory.big_surface.get_rect().collidepoint(relateive_mouse_pos)
         return clicked
         
     def inventory_get_clicked_pos(self, mouse_pos:tuple) -> tuple:
-        inventory = self.game.physics_engine.player.inventory
-        inv_screen_x = self.screen.get_width() - inventory.surface.get_width()
-        inv_screen_y = self.screen.get_height() - inventory.surface.get_height()
-        ofset = inv_screen_x, inv_screen_y
+        ofset = self.inventory_get_ofsettt()
         relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, ofset)]
-        
-        block_x = math.floor(relateive_mouse_pos[1] / settings.inventory_item_size)
-        block_y = math.floor(relateive_mouse_pos[0] / settings.inventory_item_size)
+        block_x = math.floor(relateive_mouse_pos[1] / (settings.inventory_item_size*settings.inventory_scale))
+        block_y = math.floor(relateive_mouse_pos[0] / (settings.inventory_item_size*settings.inventory_scale))
         print(f"{relateive_mouse_pos=} , {block_x=} {block_y=}")
         return block_x, block_y
+    
+    def inventory_get_ofsettt(self) -> tuple:
+        size_x, size_y = self.inventory_get_size()
+        inv_screen_x = (self.screen.get_width() - size_x)/2
+        inv_screen_y = (self.screen.get_height() - size_y)
+        ofset = inv_screen_x, inv_screen_y
+        return ofset
+    
+    def inventory_get_size(self) -> tuple:
+        size_x = settings.inventory_size[0]*settings.inventory_scale*settings.inventory_item_size
+        size_y = settings.inventory_size[1]*settings.inventory_scale*settings.inventory_item_size
+        return size_x, size_y
         
     def block_choices_screen_get_clicked(self, mouse_pos:tuple):        
         relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, settings.block_choices_screen_ofsett)]
