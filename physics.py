@@ -178,8 +178,9 @@ class Player(Entity):
         
     
 class Item:
-    def __init__(self, image) -> None:
+    def __init__(self, image, action:callable = None) -> None:
         self.image = image
+        if action: self.action = action
           
             
 class Inventory:

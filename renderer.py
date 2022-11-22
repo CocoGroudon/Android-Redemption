@@ -64,12 +64,22 @@ class Renderer:
 
     def blit_player_inventory(self):
         inventory = self.game.physics_engine.player.inventory
-        inv_screen_x = self.screen.get_width() - inventory.surface.get_width()
+        inv_screen_x = self.screen.get_width()/2 - inventory.surface.get_width()
         inv_screen_y = self.screen.get_height() - inventory.surface.get_height()
         self.screen.blit(inventory.surface, (inv_screen_x, inv_screen_y))
         if hand_item := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):
             rect_pos = self.game.physics_engine.player.rect.center
             self.screen.blit(hand_item.image, (rect_pos[0]+self.camera_ofset[0], rect_pos[1]+self.camera_ofset[1]))
+        self.blit_inventory_full()
+            
+    def blit_inventory_full(self):
+        inventory = self.game.physics_engine.player.inventory
+        surface = pygame.transform.smoothscale(inventory.surface, (80,80))
+        inv_screen_x = (self.screen.get_width() - inventory.surface.get_width())/8
+        inv_screen_y = (self.screen.get_height() - inventory.surface.get_height())/8
+        self.screen.blit(surface, (inv_screen_x, inv_screen_y))
+
+            
     def blit_projectiles(self):
         for projectile in self.game.physics_engine.projectile_group:
             self.blit_sprite(projectile)
