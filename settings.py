@@ -5,11 +5,13 @@ import pygame
 framerate = 0
 backgroundcolor = (0, 43, 53)
 blocksize = 32
+world_edit_mode = False
+debug_mode = False
 
 # World
 world_name = "test"
 world_dimensions = (500, 100)
-world_room_options = ("1")
+world_room_options = ("1", "2")
 
 # Physics
 projectile_speed = 1000

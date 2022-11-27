@@ -10,14 +10,13 @@ import assets
 class WorldEngine:
     def __init__(self) -> None:
         self.world_name = settings.world_name
+        self.world = np.zeros((1,1))
+        self.refresh_block_group()
         
-        self.walls = []
         self.block_list = []
-        self.collision_list = (1,2,3,4,5,6, 127)
-        self.blocksize = settings.blocksize
+        # self.collision_list = (1,2,3,4,5,6, 127)
         
-        # self.load_world_from_memory()
-
+        
     def set_new_world(self, dimensions:tuple[int, int]) -> None:
         self.world = np.zeros((dimensions[0], dimensions[1]), dtype=np.int8)
 

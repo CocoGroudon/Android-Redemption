@@ -12,15 +12,12 @@ class Game:
         self.clock = pygame.time.Clock()
         
         self.world_engine = world.WorldEngine()
-        self.world_engine.load_world_from_memory()
+
         self.render_engine = renderer.Renderer(game_engine_ref=self, world_engine_ref=self.world_engine)
         self.physics_engine = physics.Physics(self.world_engine, self)
         
-        self.world_edit_mode = True
         self.world_edit_current_block = 1
         
-        self.debug_mode = True
-
     def draw(self):
         self.screen.fill((settings.backgroundcolor))
         self.render_engine.draw()
@@ -55,7 +52,7 @@ class Game:
                     self.physics_engine.player.speed_x -= 128
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-                if self.world_edit_mode:
+                if settings.world_edit_mode:
                     if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
                         self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
                         return
@@ -89,9 +86,9 @@ class Game_Editor(Game):
     def __init__(self) -> None:
         super().__init__()
         settings.gravity = False
+        
     
     def handle_keyinputs(self):
-        print(self.physics_engine.player.speed_x, self.physics_engine.player.speed_y)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.stop()
@@ -128,23 +125,26 @@ class Game_Editor(Game):
                 self.world_engine.refresh_block_group()
                 self.render_engine.update_world_surface()
 
-def room_edit_mode():
+def edit_mode():
+    world_name = str(input("wie soll der Raum heißen?: "))
     game = Game_Editor()
     
-    game.world_engine.world_name = str(input("wie soll der Raum heißen?: "))
+    game.world_engine.world_name = world_name
     try: 
         game.world_engine.load_world_from_memory()
     except FileNotFoundError:
         x = int(input("wie breit soll der Raum werden?: "))
         y = int(input("wie hoch soll der Raum werden?: "))
         game.world_engine.set_new_world((x,y)) 
-    
+
+    game.world_engine.refresh_block_group()
     game.render_engine.update_world_surface()
     game.run()
 
-def main():
+def play_mode():
     game = Game()
-    game.world_engine.world = game.world_engine.create_new_random_world(20)
+    
+    game.world_engine.world = game.world_engine.create_new_random_world(10)
     game.world_engine.refresh_block_group()
     game.render_engine.update_world_surface()
 
@@ -152,4 +152,4 @@ def main():
  
 
 if __name__ == "__main__":
-    main()
+    play_mode()
