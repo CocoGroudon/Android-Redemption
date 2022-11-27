@@ -85,10 +85,71 @@ class Game:
             self.clock.tick(settings.framerate)
         self.event_shutdown()
 
+class Game_Editor(Game):
+    def __init__(self) -> None:
+        super().__init__()
+        settings.gravity = False
+    
+    def handle_keyinputs(self):
+        print(self.physics_engine.player.speed_x, self.physics_engine.player.speed_y)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.stop()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == settings.keybinds["toggle_fullscreen"]:
+                    pygame.display.toggle_fullscreen()
+                elif event.key in settings.keybinds["up"]:
+                    self.physics_engine.player.speed_y -= 128
+                elif event.key in settings.keybinds["left"]:
+                    self.physics_engine.player.speed_x -= 128
+                elif event.key in settings.keybinds["down"]:
+                    self.physics_engine.player.speed_y += 128
+                elif event.key in settings.keybinds["right"]:
+                    self.physics_engine.player.speed_x += 128
+                elif event.key in settings.keybinds["action"]:
+                    self.physics_engine.player.key_shoot = True
+            elif event.type == pygame.KEYUP:
+                if event.key in settings.keybinds["up"]:
+                    self.physics_engine.player.speed_y += 128
+                elif event.key in settings.keybinds["left"]:
+                    self.physics_engine.player.speed_x += 128
+                elif event.key in settings.keybinds["down"]:
+                    self.physics_engine.player.speed_y -= 128
+                elif event.key in settings.keybinds["right"]:
+                    self.physics_engine.player.speed_x -= 128
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_pos = pygame.mouse.get_pos()
+                if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
+                    self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
+                    return
+                block_pos = self.render_engine.get_world_block_for_mouse_pos(mouse_pos)
+                print(block_pos)
+                self.world_engine.set_block(block_pos, self.world_edit_current_block)
+                self.world_engine.refresh_block_group()
+                self.render_engine.update_world_surface()
+
+def room_edit_mode():
+    game = Game_Editor()
+    
+    game.world_engine.world_name = str(input("wie soll der Raum heißen?: "))
+    try: 
+        game.world_engine.load_world_from_memory()
+    except FileNotFoundError:
+        x = int(input("wie breit soll der Raum werden?: "))
+        y = int(input("wie hoch soll der Raum werden?: "))
+        game.world_engine.set_new_world((x,y)) 
+    
+    game.render_engine.update_world_surface()
+    game.run()
 
 def main():
     game = Game()
+    game.world_engine.world = game.world_engine.create_new_random_world(20)
+    game.world_engine.refresh_block_group()
+    game.render_engine.update_world_surface()
+
     game.run()
+ 
 
 if __name__ == "__main__":
     main()

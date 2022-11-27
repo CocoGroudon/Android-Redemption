@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 import pygame
 import numpy as np
+import random
+
 import settings
 import assets
 
@@ -53,6 +55,28 @@ class WorldEngine:
             for yIndex, block in enumerate(xList):
                 if block != 0 :
                     self.block_list.append(((xIndex, yIndex), block))
+                    
+    def _get_room(self, room_name:str) -> np.array:
+        return np.load(f"{settings.dictPath}/worlds/{room_name}.npy")
+                    
+    def create_new_random_world(self, amount_of_rooms: int):
+        room_name_list = [random.choice(settings.world_room_options) for _ in range(amount_of_rooms)]
+        room_array_list = [self._get_room(name) for name in room_name_list]
+        room_width_list = [len(room) for room in room_array_list]
+        room_height_list = [len(room[0]) for room in room_array_list]
+        
+        height = max(room_height_list)
+        width = sum(room_width_list)
+        
+        world = np.zeros((width, height), dtype=np.int8)
+        world_current_fill_pos = 0
+        for room_index, room in enumerate(room_array_list):
+            for line_index, line in enumerate(room):
+                for col_index, cell in enumerate(line):
+                    world[line_index+world_current_fill_pos][col_index] = cell
+            world_current_fill_pos += room_width_list[room_index]
+        return world
+        
 
 
 class Block_Sprite(pygame.sprite.Sprite):
