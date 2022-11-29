@@ -10,14 +10,14 @@ class Renderer:
         self.game = game_engine_ref
         self.wold_engine = world_engine_ref
         self.camera_ofset = [0,0]
-        pygame.font.init()
-        self.debug_font = pygame.font.SysFont("Calibri", 15)
-    
         self.screen = self.game.screen
         
+        pygame.font.init()
+    
         self.world_screen = pygame.Surface((settings.world_dimensions[0]*settings.blocksize, settings.world_dimensions[1]*settings.blocksize), flags=pygame.SRCALPHA)
         self.update_world_surface()
         
+        self.debug_font = pygame.font.SysFont("Calibri", 15)
         self.debug_screen = pygame.Surface((300, 500), flags=pygame.SRCALPHA)
         
         self.block_choices_screen = pygame.Surface((settings.blocksize, len(settings.block_choices)*settings.blocksize), flags=pygame.SRCALPHA)
@@ -30,10 +30,10 @@ class Renderer:
         self.blit_player_inventory()
         self.blit_projectiles()
                 
-        if self.game.world_edit_mode:
+        if settings.world_edit_mode:
             self.screen.blit(self.block_choices_screen, settings.block_choices_screen_ofsett)
         
-        if self.game.debug_mode:
+        if settings.debug_mode:
             self.debu_menu_update()
             self.screen.blit(self.debug_screen, (10,10))
             
