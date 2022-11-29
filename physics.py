@@ -178,8 +178,13 @@ class Player(Entity):
         
     
 class Item:
-    def __init__(self, image) -> None:
+    def __init__(self, image, action:callable = None) -> None:
         self.image = image
+        if action: 
+            self.action = action 
+        else: 
+            self.action = False
+
           
             
 class Inventory:
@@ -187,6 +192,7 @@ class Inventory:
         self.__inventory_list:Item = [[None for j in range(settings.inventory_size[0])] for i in range(settings.inventory_size[1])]
         self.surface = pygame.Surface((settings.inventory_size[0]*settings.inventory_item_size, settings.inventory_size[1]*settings.inventory_item_size), flags=pygame.SRCALPHA)
         self.update_surface()
+        self.hand = (0,0) # place in Inventory      
         
     def __get_first_empty_in_list(self, list:list) -> int:
         """ 
@@ -217,6 +223,7 @@ class Inventory:
         
         print(f"added {item=} at position {first_empty_line} | {first_empty_col}")
         self.__inventory_list[first_empty_line][first_empty_col] = item
+        self.update_surface()
         
     def remove_item(self, position:tuple) -> None:
         self.__inventory_list[position[0]][position[1]] = None
@@ -229,6 +236,14 @@ class Inventory:
                 if cell != None:
                     self.surface.blit(cell.image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
 
+        size_x = settings.inventory_size[0]*settings.inventory_scale*settings.inventory_item_size
+        size_y = settings.inventory_size[1]*settings.inventory_scale*settings.inventory_item_size
+        self.big_surface = pygame.transform.smoothscale(self.surface, (size_x, size_y))
+        self.big_surface.convert_alpha(self.big_surface)
+        print("updated inventory surface")
+
+    def get_item_list(self) -> list:
+        return self.__inventory_list
 
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''
