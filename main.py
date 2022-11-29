@@ -42,11 +42,11 @@ class Game:
                     self.physics_engine.player.speed_x -= 128
                 elif event.key in settings.keybinds["down"]:
                     self.physics_engine.new_item()
-                    self.physics_engine.discard_item()
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
-                    self.physics_engine.player.key_shoot = True
+                    # self.physics_engine.player.key_shoot = True
+                    self.physics_engine.discard_item()
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False

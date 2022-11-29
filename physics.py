@@ -115,30 +115,39 @@ class Physics:
     def collect_item(self):
         for item in self.items_group:
             if self.player.rect.colliderect(item.rect):
-                print("colliede with item")
                 if self.player.inventory.add_item(item):
                     self.items_group.remove(item)
                     self.entity_group.remove(item)
 
     def discard_item(self):
-        item_pos = (0, 0)
+        item_pos = [0, 0]
         item = self.player.inventory.get_item(item_pos)
         item_remove = True
-        print("Das ist das item" + str(item) )
-        if item != None:
-            self.create_item(item)
-            self.player.inventory.remove_item(item_pos)
-            
-            self.player.inventory.update_surface()
-            item_remove = False
-            print(item)
-        else: 
-            if item_pos[0] > 5:
-                print("ITEM_pos unter Null")
+        while item == None:
+            item_pos[1] += 1
+            if item_pos[1] == settings.inventory_size[0]:
+                item_pos[1] = 0
                 item_pos[0] += 1
-            elif item_pos[1] > 9:
-                item_pos[1] += 1
+            if item_pos[0] == settings.inventory_size[1]:
+                return
+            item = self.player.inventory.get_item(item_pos)
+
+        if item == None: # Inventar komplett leer
+            return
+        print("Das ist das item" + str(item) )
         
+        player_pos = self.player.get_pos()
+        item.set_pos(player_pos)
+        
+        print(item.get_pos(), vars(item))
+        print(player_pos)
+        
+        self.create_item(item)
+        self.player.inventory.remove_item(item_pos)
+        
+        self.player.inventory.update_surface()
+
+        print("item weggeworfen")
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:
@@ -192,6 +201,13 @@ class Entity(pygame.sprite.Sprite):
     def get_pos(self) -> tuple:
         return self.__pos
     
+    def set_pos(self, pos:tuple[int,int]):
+        '''möglichst nicht verwenden, weil das mit der Kollision buggen kann'''
+        print("changed pos of", self)
+        self.__pos[0] == pos[0]
+        self.__pos[1] == pos[1]
+        print(self.__pos)
+    
     def check_if_ground(self) -> bool:
         self.__pos[1] += 1
         self.update_rect()
@@ -227,6 +243,10 @@ class Item(Entity):
         self.pos = pos
         self.size = size
         self.image = image
+        
+    def set_pos(self, pos: tuple[int, int]):
+        self.pos = pos
+        return super().set_pos(pos)
     
 
             
