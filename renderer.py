@@ -16,7 +16,7 @@ class Renderer:
         self.debug_font = pygame.font.SysFont("Calibri", 15)
         self.inventory_show = False
     
-        self.screen = self.game.screen
+        self.screen:pygame.surface.Surface = self.game.screen
         
         pygame.font.init()
     
@@ -30,6 +30,12 @@ class Renderer:
         self.block_choices_screen_update()
 
     def draw(self):
+        self.blit_paralax_background(assets.paralax_background[0], 0.05)
+        self.blit_paralax_background(assets.paralax_background[1], 0.1)
+        self.blit_paralax_background(assets.paralax_background[2], 0.3)
+        self.blit_paralax_background(assets.paralax_background[3], 0.6)
+        self.blit_paralax_background(assets.paralax_background[4], 0.8)
+        self.blit_paralax_background(assets.paralax_background[5], 1)
         self.blit_world()
         self.blit_entities()
         self.blit_player()
@@ -76,6 +82,14 @@ class Renderer:
         ofset = self.inventory_get_ofsettt()
         self.screen.blit(self.game.physics_engine.player.inventory.big_surface, ofset)
 
+    def blit_paralax_background(self, image:pygame.image, speed:int):
+        screen_width = self.screen.get_width()
+        image_size = image.get_width()
+        posX = (-self.camera_ofset[0]*speed) % image_size
+    
+        images_to_fit_screen = math.ceil(screen_width/image_size) +1
+        for i in range(images_to_fit_screen):
+            self.screen.blit(image, (-posX+i*image_size,self.camera_ofset[1]))
             
     def blit_projectiles(self):
         for projectile in self.game.physics_engine.projectile_group:
@@ -144,7 +158,7 @@ class Renderer:
         print(f"{relateive_mouse_pos=} , {block_x=} {block_y=}")
         return block_x, block_y
     
-    def inventory_get_ofsettt(self) -> tuple:
+    def inventory_get_ofsett(self) -> tuple:
         size_x, size_y = self.inventory_get_size()
         inv_screen_x = (self.screen.get_width() - size_x)/2
         inv_screen_y = (self.screen.get_height() - size_y)
