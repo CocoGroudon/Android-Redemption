@@ -6,6 +6,8 @@ textureMap = {
     "player_entity": pygame.image.load(Path(__file__).with_name('playerasset.png')),
     "projectile": pygame.image.load(Path(__file__).with_name('projectile.png')),
     "weed": pygame.image.load(Path(__file__).with_name("weed.png")),
+    "test_projectile": pygame.image.load(Path(__file__).with_name('test_projectile.png')),
+    "heart": pygame.image.load(Path(__file__).with_name('heart.png')),
     0 : pygame.image.load(Path(__file__).with_name('luft.png')),
     1 : pygame.image.load(Path(__file__).with_name('stein.png')),
     2 : pygame.image.load(Path(__file__).with_name('grass.png')),

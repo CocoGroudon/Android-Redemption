@@ -249,15 +249,20 @@ class Player(Entity):
         self.physics_engine.projectile_group.add(projectile)
         
     
+
 class Item(Entity):
-    def __init__(self, wordlengine_ref: WorldEngine, physicsengine_ref, pos: tuple, size: tuple, image: pygame.image) -> None:
+    def __init__(self, wordlengine_ref: WorldEngine, physicsengine_ref, pos: tuple, size: tuple, image: pygame.image, action:callable = None) -> None:
         super().__init__(wordlengine_ref, physicsengine_ref, pos, size, image)
         self.image = image
         self.pos = pos
         self.size = size
         self.image = image
         self.reset_pick_up_delay()
-        
+        if action: 
+            self.action = action 
+        else: 
+            self.action = False
+       
     def set_pos(self, pos: tuple[int, int]):
         self.pos = pos
         return super().set_pos(pos)
@@ -272,6 +277,7 @@ class Inventory:
         self.__inventory_list:Item = [[None for j in range(settings.inventory_size[0])] for i in range(settings.inventory_size[1])]
         self.surface = pygame.Surface((settings.inventory_size[0]*settings.inventory_item_size, settings.inventory_size[1]*settings.inventory_item_size), flags=pygame.SRCALPHA)
         self.update_surface()
+        self.hand = (0,0) # place in Inventory      
         
     def __get_first_empty_in_list(self, list:list) -> int:
         """ 
@@ -302,6 +308,7 @@ class Inventory:
         
         print(f"added {item=} at position {first_empty_line} | {first_empty_col}")
         self.__inventory_list[first_empty_line][first_empty_col] = item
+        self.update_surface()
         
         self.update_surface()
         return True
@@ -318,6 +325,14 @@ class Inventory:
                 if cell != None:
                     self.surface.blit(cell.image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
 
+        size_x = settings.inventory_size[0]*settings.inventory_scale*settings.inventory_item_size
+        size_y = settings.inventory_size[1]*settings.inventory_scale*settings.inventory_item_size
+        self.big_surface = pygame.transform.smoothscale(self.surface, (size_x, size_y))
+        self.big_surface.convert_alpha(self.big_surface)
+        print("updated inventory surface")
+
+    def get_item_list(self) -> list:
+        return self.__inventory_list
 
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''
@@ -362,9 +377,14 @@ class Projectile_Gravity(Projectile):
   
   
 class Health_Bar:
-    def __init__(self, max_Health:int) -> None:
+    def __init__(self, max_Health:int, current_health:int = 0) -> None:
         self.max = max_Health
-        self.current = max_Health
+        self.image = assets.textureMap["heart"]
+        self.image = pygame.transform.scale(self.image, (4,4))
+        if current_health == 0:
+            self.current = max_Health
+        else:
+            self.current = current_health
         
     def take_damage(self, damage):
         self.current -= damage
@@ -378,3 +398,11 @@ class Health_Bar:
         if self.current <= 0:
             return True
         return False
+
+    def get_screen(self) -> pygame.surface.Surface:
+        image_value_life_poins = 10
+        images = self.max/image_value_life_poins
+        screen = pygame.Surface((self.image.get_width()*images, self.image.get_height()), flags=pygame.SRCALPHA)
+        for x in range(self.current//image_value_life_poins):
+            screen.blit(self.image, (x*self.image.get_width(), 0))
+        return screen

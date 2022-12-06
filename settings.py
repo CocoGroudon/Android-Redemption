@@ -5,10 +5,13 @@ import pygame
 framerate = 0
 backgroundcolor = (0, 43, 53)
 blocksize = 32
+world_edit_mode = False
+debug_mode = False
 
 # World
 world_name = "test"
 world_dimensions = (500, 100)
+world_room_options = ("1", "2")
 
 # Physics
 projectile_speed = 1000
@@ -28,14 +31,15 @@ item_pick_up_delay = 0.2
 # Renderer
 block_choices_screen_ofsett = (0,200)
 block_choices = (0,1,2,3,127)
+inventory_scale = 4
 
 keybinds = {
-    "up": [pygame.K_SPACE, pygame.K_UP ],
+    "up": [pygame.K_SPACE, pygame.K_UP, pygame.K_w ],
     "left": [pygame.K_a, pygame.K_LEFT ],
     "down": [pygame.K_s, pygame.K_DOWN ],
     "right": [pygame.K_d, pygame.K_RIGHT ],
     "toggle_fullscreen": pygame.K_F11,
-    "action": [pygame.K_w]
+    "inventory": [pygame.K_e]
 }
 
 dictPath = os.path.dirname(Path(__file__))
