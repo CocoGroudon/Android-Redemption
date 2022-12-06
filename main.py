@@ -1,6 +1,6 @@
 import pygame
 
-import assets
+import assets 
 import settings
 import world
 import renderer
@@ -35,12 +35,16 @@ class Game:
                     self.physics_engine.player.key_jump = True
                 elif event.key in settings.keybinds["left"]:
                     self.physics_engine.player.speed_x -= 128
+                elif event.key in settings.keybinds["down"]:
+                    self.physics_engine.new_item()
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
                     self.physics_engine.player.key_shoot = True
+                    self.physics_engine.discard_item()
                 elif event.key in settings.keybinds["inventory"]:
                     self.render_engine.inventory_show = not self.render_engine.inventory_show  
+
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False
@@ -69,7 +73,7 @@ class Game:
 
     def event_shutdown(self):
         pass
-    
+
     def stop(self):
         self.isRunning = False
 

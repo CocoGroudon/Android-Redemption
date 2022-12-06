@@ -36,6 +36,9 @@ class Physics:
             Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]),
             Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
         self.player = Player(self.world_engine, self, (40,40), (32,64), assets.textureMap["player_entity"])
+
+
+        self.items_group = pygame.sprite.Group()
         
     def tick(self):
         # Setup for Tick
@@ -46,6 +49,9 @@ class Physics:
         self.handle_player(tick_lenght)
         self.handle_entities(tick_lenght)
         self.handle_projectiles(tick_lenght)
+        self.count_down_item_pickup_delay(tick_lenght)
+        
+        self.collect_item()
 
     def handle_entities(self, tick_lenght):
         for entity in self.entity_group:
@@ -96,7 +102,65 @@ class Physics:
             if will_die: 
                 self.projectile_group.remove(projectile)
         
+    def create_item(self, item)-> bool :
+        # item = Item(self.world_engine, self, (100, 100), (16,16), assets.textureMap["weed"])
+        self.entity_group.add(item)
+        self.items_group.add(item)
+
         
+    def new_item(self):
+        item = Item(self.world_engine, self, (100, 100), (16,16), assets.textureMap["weed"])
+        self.entity_group.add(item)
+        self.items_group.add(item)
+
+    def collect_item(self):
+        for item in self.items_group:
+            if not self.player.rect.colliderect(item.rect):
+                continue
+            if not item.pick_up_delay <= 0:
+                continue
+            if self.player.inventory.add_item(item): #
+                self.items_group.remove(item)
+                self.entity_group.remove(item)
+
+    def discard_item(self):
+        item_pos = [0, 0]
+        while True:
+            item = self.player.inventory.get_item(item_pos)
+            if item != None: 
+                break
+            
+            item_pos[1] += 1
+            if item_pos[1] == settings.inventory_size[0]:
+                item_pos[1] = 0
+                item_pos[0] += 1
+            if item_pos[0] == settings.inventory_size[1]:
+                return
+            
+        player_pos = self.player.get_pos()
+        item.set_pos(player_pos)
+        
+        print(item.get_pos(), vars(item))
+        print(player_pos)
+        item.reset_pick_up_delay()
+        
+        self.create_item(item)
+        self.player.inventory.remove_item(item_pos)
+        
+        self.player.inventory.update_surface()
+
+        print("item weggeworfen")
+
+    def count_down_item_pickup_delay(self, tick_lenght:float):
+        '''counts down the Item_pick_up_delay for every Item'''
+        for sprite in self.items_group:
+            if sprite.pick_up_delay <= 0:
+                continue
+            if not sprite.rect.colliderect(self.player):
+                sprite.reset_pick_up_delay()
+                continue
+            sprite.pick_up_delay -= tick_lenght
+
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:
         pygame.sprite.Sprite.__init__(self)
@@ -149,6 +213,14 @@ class Entity(pygame.sprite.Sprite):
     def get_pos(self) -> tuple:
         return self.__pos
     
+    def set_pos(self, pos:tuple[int,int]):
+        '''möglichst nicht verwenden, weil das mit der Kollision buggen kann'''
+        self.__pos[0] -= self.__pos[0] # Ich weiß nicht, wieso ich nicht einfach __pos einen neuen Wert zuweisen kann, aber es geht nicht
+        self.__pos[1] -= self.__pos[1]
+        self.__pos[0] += pos[0]
+        self.__pos[1] += pos[1]
+        self.update_rect()
+    
     def check_if_ground(self) -> bool:
         self.__pos[1] += 1
         self.update_rect()
@@ -177,15 +249,28 @@ class Player(Entity):
         self.physics_engine.projectile_group.add(projectile)
         
     
-class Item:
-    def __init__(self, image, action:callable = None) -> None:
+
+class Item(Entity):
+    def __init__(self, wordlengine_ref: WorldEngine, physicsengine_ref, pos: tuple, size: tuple, image: pygame.image, action:callable = None) -> None:
+        super().__init__(wordlengine_ref, physicsengine_ref, pos, size, image)
         self.image = image
+        self.pos = pos
+        self.size = size
+        self.image = image
+        self.reset_pick_up_delay()
         if action: 
             self.action = action 
         else: 
             self.action = False
+       
+    def set_pos(self, pos: tuple[int, int]):
+        self.pos = pos
+        return super().set_pos(pos)
+    
+    def reset_pick_up_delay(self):
+        self.pick_up_delay = settings.item_pick_up_delay
+    
 
-          
             
 class Inventory:
     def __init__(self) -> None:
@@ -225,8 +310,12 @@ class Inventory:
         self.__inventory_list[first_empty_line][first_empty_col] = item
         self.update_surface()
         
+        self.update_surface()
+        return True
+        
     def remove_item(self, position:tuple) -> None:
         self.__inventory_list[position[0]][position[1]] = None
+        self.update_surface()
                 
     def update_surface(self):
         """ refreshes the surface / image of the Inventory """
@@ -255,7 +344,7 @@ class Projectile(pygame.sprite.Sprite):
         self.damage = damage
         self.time_of_spawn = time.time()
                 
-        self.image_normal = assets.textureMap["test_projectile"]
+        self.image_normal = assets.textureMap["projectile"]
         self.image = pygame.transform.rotate(self.image_normal, (math.degrees(self.angle)+180)*-1)
         self.rect = self.image.get_rect()
         

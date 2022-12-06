@@ -16,6 +16,8 @@ textureMap = {
     "player_entity": load_image('playerasset.png'),
     "test_projectile": load_image('test_projectile.png'),
     "heart": load_image('heart.png'),
+    "projectile": load_image('projectile.png'),
+    "weed": load_image("weed.png"),
     0 : load_image('luft.png'),
     1 : load_image('stein.png'),
     2 : load_image('grass.png'),
