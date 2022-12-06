@@ -68,8 +68,8 @@ class Game:
                     self.render_engine.update_world_surface()
 
     def event_shutdown(self):
-        self.world_engine.save_world_to_memory()
-
+        pass
+    
     def stop(self):
         self.isRunning = False
 
