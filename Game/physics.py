@@ -33,6 +33,7 @@ class Physics:
         
         self.projectile_group = pygame.sprite.Group()
         self.entity_group = pygame.sprite.Group()
+        self.enemie_group = pygame.sprite.Group()
         self.entity_group.add(
             Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]),
             Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))

@@ -47,7 +47,8 @@ class Game:
                     self.physics_engine.discard_item()
                 elif event.key in settings.keybinds["inventory"]:
                     self.render_engine.inventory_show = not self.render_engine.inventory_show  
-
+                elif event.key == pygame.K_2:
+                    self.physics_engine.add_enemie()
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False
