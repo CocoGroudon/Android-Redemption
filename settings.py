@@ -24,6 +24,10 @@ grav_strenght = 200
 # Player
 inventory_size = (5,9)
 inventory_item_size = 8 # Pixel
+
+item_size = (16, 16)
+item_pick_up_delay = 0.2
+
 # Renderer
 block_choices_screen_ofsett = (0,200)
 block_choices = (0,1,2,3,127)
@@ -35,7 +39,6 @@ keybinds = {
     "down": [pygame.K_s, pygame.K_DOWN ],
     "right": [pygame.K_d, pygame.K_RIGHT ],
     "toggle_fullscreen": pygame.K_F11,
-    "action": [pygame.K_1],
     "inventory": [pygame.K_e]
 }
 

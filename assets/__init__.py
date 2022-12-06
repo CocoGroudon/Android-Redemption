@@ -4,6 +4,8 @@ from pathlib import Path
 textureMap = {
     "test_entity": pygame.image.load(Path(__file__).with_name('test_entity.png')),
     "player_entity": pygame.image.load(Path(__file__).with_name('playerasset.png')),
+    "projectile": pygame.image.load(Path(__file__).with_name('projectile.png')),
+    "weed": pygame.image.load(Path(__file__).with_name("weed.png")),
     "test_projectile": pygame.image.load(Path(__file__).with_name('test_projectile.png')),
     "heart": pygame.image.load(Path(__file__).with_name('heart.png')),
     0 : pygame.image.load(Path(__file__).with_name('luft.png')),
