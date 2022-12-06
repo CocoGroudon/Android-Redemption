@@ -5,7 +5,7 @@ import settings
 pygame.display.init()
 screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
 
-def load_image(path:str) -> str:
+def load_image(path:str) -> pygame.image:
     new_path = settings.dictPath+"/assets/"+path
     image = pygame.image.load(new_path)
     return image

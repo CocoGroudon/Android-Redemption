@@ -159,14 +159,6 @@ def play_mode():
         angle *must* be given in radiants, else everythin gets scuffed'''
         projectile = physics.Projectile_Gravity(player, angle, player.get_pos()[:], settings.projectile_speed, 10)
         player.physics_engine.projectile_group.add(projectile)
-    game.physics_engine.player.inventory.add_item(physics.Item(assets.texture_item[1], shoot))
-    game.physics_engine.player.inventory.add_item(physics.Item(assets.textureMap[2]))
-    game.physics_engine.player.inventory.add_item(physics.Item(assets.textureMap[3]))
-    game.physics_engine.player.inventory.add_item(physics.Item(assets.textureMap[127]))
-    print(game.physics_engine.player.inventory.get_item_list())
-    
-
-
 
     game.run()
  
