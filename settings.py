@@ -3,10 +3,10 @@ from pathlib import Path
 import pygame
 
 framerate = 0
-backgroundcolor = (0, 43, 53)
+backgroundcolor = (44, 37, 68)
 blocksize = 32
 world_edit_mode = False
-debug_mode = False
+debug_mode = True
 
 # World
 world_name = "test"

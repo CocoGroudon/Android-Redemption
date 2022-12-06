@@ -8,7 +8,7 @@ import physics
 
 class Game:
     def __init__(self) -> None:
-        self.screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
+        self.screen = assets.screen
         self.clock = pygame.time.Clock()
         
         self.world_engine = world.WorldEngine()
@@ -132,6 +132,7 @@ class Game_Editor(Game):
                 self.render_engine.update_world_surface()
 
 def edit_mode():
+    settings.world_edit_mode = True
     world_name = str(input("wie soll der Raum heißen?: "))
     game = Game_Editor()
     
