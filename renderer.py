@@ -79,7 +79,7 @@ class Renderer:
             self.blit_inventory_full()
             
     def blit_inventory_full(self):
-        ofset = self.inventory_get_ofsettt()
+        ofset = self.inventory_get_ofsett()
         self.screen.blit(self.game.physics_engine.player.inventory.big_surface, ofset)
 
     def blit_paralax_background(self, image:pygame.image, speed:int):
@@ -145,13 +145,13 @@ class Renderer:
         pygame.draw.line(self.block_choices_screen, (255,255,255), (settings.blocksize-1,0), (settings.blocksize-1,settings.blocksize*len(settings.block_choices)-1))
             
     def inventory_get_clicked(self, mouse_pos:tuple) -> tuple:
-        ofset = self.inventory_get_ofsettt()
+        ofset = self.inventory_get_ofsett()
         relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, ofset)]
         clicked = self.game.physics_engine.player.inventory.big_surface.get_rect().collidepoint(relateive_mouse_pos)
         return clicked
         
     def inventory_get_clicked_pos(self, mouse_pos:tuple) -> tuple:
-        ofset = self.inventory_get_ofsettt()
+        ofset = self.inventory_get_ofsett()
         relateive_mouse_pos = [mouse - ofsett for mouse, ofsett in zip(mouse_pos, ofset)]
         block_x = math.floor(relateive_mouse_pos[1] / (settings.inventory_item_size*settings.inventory_scale))
         block_y = math.floor(relateive_mouse_pos[0] / (settings.inventory_item_size*settings.inventory_scale))
