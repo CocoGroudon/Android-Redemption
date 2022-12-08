@@ -1,10 +1,10 @@
 import pygame
 
 import assets 
-import settings
-import world
-import renderer
-import physics
+import settings as settings
+import world as world
+import renderer as renderer
+import physics as physics
 
 class Game:
     def __init__(self) -> None:
