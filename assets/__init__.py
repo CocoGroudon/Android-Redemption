@@ -1,12 +1,28 @@
 import pygame
 from pathlib import Path
+import sys
+import os
 import settings
+
+
 
 pygame.display.init()
 screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
 
+def find_data_file(filename):
+    if getattr(sys, "frozen", False):
+        # The application is frozen
+        datadir = os.path.dirname(sys.executable)
+        filename = os.path.basename(filename)
+    else:
+        # The application is not frozen
+        # Change this bit to match where you store your data files:
+        datadir = os.path.dirname(__file__)
+    return os.path.join(datadir, filename)
+
+
 def load_image(path:str) -> pygame.image:
-    new_path = settings.dictPath+"/assets/"+path
+    new_path = find_data_file(path)
     image = pygame.image.load(new_path)
     return image
     

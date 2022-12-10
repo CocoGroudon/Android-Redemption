@@ -43,4 +43,4 @@ keybinds = {
     "action": [pygame.K_KP_ENTER]
 }
 
-dictPath = os.path.dirname(Path(__file__))
+dictPath = os.path.dirname(os.path.abspath(__file__))
