@@ -5,7 +5,7 @@ import settings
 
 program_name = "Android-Redemption"
 ignorefiles = [".gitignore"]
-ignoredicts = ["git", "__pycache__", "build"]
+ignoredicts = ["git", "__pycache__", "build", "venv"]
 
 dict_len = len(settings.dictPath)
 dict_len += 1

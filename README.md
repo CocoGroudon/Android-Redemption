@@ -3,6 +3,13 @@
 # Authors:
 # Leon Moser, Constantin, Aleksandar, Artem
 
+Currently only works in python3.9 because of dependencies issues
+
 #Install 
-1. python3 -m venv venv
-2. pip install -r requirements.txt
+1. python3.9 -m venv venv
+2. pip3.9 install -r requirements.txt
+
+
+To build the game urself (if you want to have the .exe or installer)
+1. do everythig mentioned in #Install
+2. run build.cmd
