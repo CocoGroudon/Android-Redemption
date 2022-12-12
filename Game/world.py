@@ -2,10 +2,22 @@ from dataclasses import dataclass
 import pygame
 import numpy as np
 import random
+import sys
+import os
 
 import settings
 import assets
 
+def find_data_file(filename):
+    if getattr(sys, "frozen", False):
+        # The application is frozen
+        datadir = os.path.dirname(sys.executable)
+        filename = os.path.basename(filename)
+    else:
+        # The application is not frozen
+        # Change this bit to match where you store your data files:
+        datadir = os.path.dirname(__file__)
+    return os.path.join(datadir, filename)
 
 class WorldEngine:
     def __init__(self) -> None:
@@ -56,7 +68,8 @@ class WorldEngine:
                     self.block_list.append(((xIndex, yIndex), block))
                     
     def _get_room(self, room_name:str) -> np.array:
-        return np.load(f"{settings.dictPath}/worlds/{room_name}.npy")
+        myPath = find_data_file(f"worlds/{room_name}.npy")
+        return np.load(myPath)
                     
     def create_new_random_world(self, amount_of_rooms: int):
         room_name_list = [random.choice(settings.world_room_options) for _ in range(amount_of_rooms)]
