@@ -73,6 +73,7 @@ class WorldEngine:
                     
     def create_new_random_world(self, amount_of_rooms: int):
         room_name_list = [random.choice(settings.world_room_options) for _ in range(amount_of_rooms)]
+        room_name_list = ["spawn"] + room_name_list + ["end"]
         room_array_list = [self._get_room(name) for name in room_name_list]
         room_width_list = [len(room) for room in room_array_list]
         room_height_list = [len(room[0]) for room in room_array_list]
@@ -99,14 +100,3 @@ class Block_Sprite(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(pos[0]*settings.blocksize, pos[1]*settings.blocksize)
 
-if __name__ == "__main__":
-    world_engine = WorldEngine()    
-    world_engine.set_new_world(settings.world_dimensions)
-    world_engine.set_block((5,2), 127)
-    world_engine.set_block((1,2), 1)
-    world_engine.set_block((2,2), 1)
-    world_engine.set_block((3,2), 1)
-    world_engine.set_block((6,0), 1)
-    world_engine.set_block((6,1), 1)
-    world_engine.set_block((6,2), 1)
-    world_engine.save_world_to_memory()

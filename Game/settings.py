@@ -11,15 +11,15 @@ debug_mode = True
 # World
 world_name = "test"
 world_dimensions = (500, 100)
-world_room_options = ("1", "2")
+world_room_options = ("base", "pit")
 
 # Physics
 projectile_speed = 1000
 projectile_lifetime = 10
 
-player_jump_strength = 200
+player_jump_strength = blocksize*10
 gravity = True
-grav_strenght = 200
+grav_strenght = blocksize*12
 
 # Player
 inventory_size = (5,9)
