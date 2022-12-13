@@ -35,7 +35,7 @@ class Physics:
         self.entity_group.add(
             Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]),
             Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
-        self.player = Player(self.world_engine, self, (40,40), (32,64), assets.textureMap["player_entity"])
+        self.player = Player(self.world_engine, self, (settings.blocksize*8, settings.blocksize*21), (32,64), assets.textureMap["player_entity"])
 
 
         self.items_group = pygame.sprite.Group()

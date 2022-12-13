@@ -147,6 +147,7 @@ def edit_mode():
     game.world_engine.refresh_block_group()
     game.render_engine.update_world_surface()
     game.run()
+    game.world_engine.save_world_to_memory()
 
 def play_mode():
     game = Game()
