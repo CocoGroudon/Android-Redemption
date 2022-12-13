@@ -69,7 +69,9 @@ class Renderer:
     def blit_player(self):
         ''' blits player and healt screen of player'''
         self.blit_sprite(self.game.physics_engine.player)
-        self.blit_element_rect(self.game.physics_engine.player.health.get_screen(), self.game.physics_engine.player.rect)
+        
+        healt_screen = self.game.physics_engine.player.health.get_screen()
+        self.screen.blit(self.game.physics_engine.player.health.get_screen(), (self.screen.get_width()-healt_screen.get_width(),0))
 
     def blit_player_inventory(self):
         if hand_item := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):

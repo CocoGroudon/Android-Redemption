@@ -17,9 +17,9 @@ world_room_options = ("base", "pit")
 projectile_speed = 1000
 projectile_lifetime = 10
 
-player_jump_strength = 200
+player_jump_strength = blocksize*10
 gravity = True
-grav_strenght = 200
+grav_strenght = blocksize*12
 
 # Player
 inventory_size = (5,9)

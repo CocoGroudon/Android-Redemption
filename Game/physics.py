@@ -143,6 +143,7 @@ class Physics:
         print(item.get_pos(), vars(item))
         print(player_pos)
         item.reset_pick_up_delay()
+        item.health.reset()
         
         self.create_item(item)
         self.player.inventory.remove_item(item_pos)
@@ -380,12 +381,14 @@ class Health_Bar:
     def __init__(self, max_Health:int, current_health:int = 0) -> None:
         self.max = max_Health
         self.image = assets.textureMap["heart"]
-        self.image = pygame.transform.scale(self.image, (4,4))
         if current_health == 0:
             self.current = max_Health
         else:
             self.current = current_health
         
+    def reset(self):
+        self.current = self.max    
+    
     def take_damage(self, damage):
         self.current -= damage
     
