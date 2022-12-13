@@ -74,9 +74,14 @@ class Renderer:
         self.screen.blit(self.game.physics_engine.player.health.get_screen(), (self.screen.get_width()-healt_screen.get_width(),0))
 
     def blit_player_inventory(self):
-        if hand_item := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):
+        hand_item = self.game.physics_engine.player.inventory.get_hand_item()
+        if hand_item:
+            print("blitted hand item", hand_item)
             rect_pos = self.game.physics_engine.player.rect.center
-            self.screen.blit(hand_item.image, (rect_pos[0]+self.camera_ofset[0], rect_pos[1]+self.camera_ofset[1]))
+            pos = rect_pos[0]-self.camera_ofset[0], rect_pos[1]-self.camera_ofset[1]
+            # pos = (rect_pos[0]-hand_item.image.get_width()/2, rect_pos[1]-hand_item.image.get_height()/2)
+            print(pos)
+            self.screen.blit(hand_item.image, pos)
         if self.inventory_show:
             self.blit_inventory_full()
             

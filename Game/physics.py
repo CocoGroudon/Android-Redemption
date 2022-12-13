@@ -70,7 +70,7 @@ class Physics:
         if self.player.key_shoot:
             angle = get_angle_to_world_pos(self.player.get_pos(), self.game.render_engine.get_world_pos_for_mouse_pos(pygame.mouse.get_pos()))
             self.player.shoot(angle)
-            self.player.key_shoot = False
+            # self.player.key_shoot = False
             
         if settings.gravity:
             self.player.speed_y += settings.grav_strenght*tick_lenght
@@ -109,7 +109,7 @@ class Physics:
 
         
     def new_item(self):
-        item = Item(self.world_engine, self, (100, 100), (16,16), assets.textureMap["weed"])
+        item = Item(self.world_engine, self, (100, 100), (16,16), assets.texture_item["weed"])
         self.entity_group.add(item)
         self.items_group.add(item)
 
@@ -235,19 +235,24 @@ class Entity(pygame.sprite.Sprite):
 
 class Player(Entity):
     def __init__(self, wordlengine_ref: WorldEngine, physicsengine_ref:Physics ,pos: tuple, size: tuple, image: pygame.image) -> None:
-        super().__init__(wordlengine_ref, physicsengine_ref, pos, size, image)
         self.speed_x = 0
         self.speed_y = 0
         self.key_jump = False
         self.time_since_in_air = 0 
         self.inventory = Inventory()
         self.key_shoot = False
+        self.last_shot = pygame.time.get_ticks()
+        super().__init__(wordlengine_ref, physicsengine_ref, pos, size, image)
         
     def shoot(self, angle:float):
         '''creates a new standart projectile in the given direction \n
         angle *must* be given in radiants, else everythin gets scuffed'''
-        projectile = Projectile_Gravity(self, angle, self.get_pos()[:], settings.projectile_speed, 10)
-        self.physics_engine.projectile_group.add(projectile)
+        item = self.inventory.get_hand_item()
+        if item == None:
+            return
+        if not callable(item.action):
+            return
+        self.inventory.get_hand_item().action(angle)
         
     
 
@@ -321,6 +326,8 @@ class Inventory:
     def update_surface(self):
         """ refreshes the surface / image of the Inventory """
         self.surface.fill((0,0,0,0))
+        # draw Border around the inventory
+        pygame.draw.rect(self.surface, (255,255,255), (0,0,settings.inventory_size[0]*settings.inventory_item_size,settings.inventory_size[1]*settings.inventory_item_size), 2)
         for col_index, line in enumerate(self.__inventory_list): # col_index and line_index are switched on purpose because of the was Python handles nested lists
             for line_index, cell in enumerate(line):
                 if cell != None:
@@ -334,6 +341,9 @@ class Inventory:
 
     def get_item_list(self) -> list:
         return self.__inventory_list
+    
+    def get_hand_item(self) -> Item:
+        return self.__inventory_list[self.hand[0]][self.hand[1]]
 
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''
@@ -368,7 +378,7 @@ class Projectile(pygame.sprite.Sprite):
 
 class Projectile_Gravity(Projectile):  
     def __init__(self, owner: Entity, angle: float, start_pos: tuple, speed: float, damage:float) -> None:
-        super().__init__(owner, angle, start_pos, speed, damage)
+        super().__init__(owner=owner, angle=angle, start_pos=start_pos, speed=speed, damage=damage)
         self.down_speed = 0
     
     def move_forth(self, tick_lenght:float):

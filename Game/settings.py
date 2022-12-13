@@ -21,6 +21,8 @@ player_jump_strength = blocksize*10
 gravity = True
 grav_strenght = blocksize*12
 
+hand_ofsett = (-12, -20)
+
 # Player
 inventory_size = (5,9)
 inventory_item_size = 8 # Pixel

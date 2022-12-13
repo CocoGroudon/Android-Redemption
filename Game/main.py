@@ -54,13 +54,12 @@ class Game:
                     self.physics_engine.player.speed_x -= 128  
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
+                self.physics_engine.player.key_shoot = True
 
                 hand_item = self.physics_engine.player.inventory.get_item(self.physics_engine.player.inventory.hand)
                 
                 if self.render_engine.inventory_get_clicked(mouse_pos) and self.render_engine.inventory_show:
                     self.physics_engine.player.inventory.hand = self.render_engine.inventory_get_clicked_pos(mouse_pos)
-                elif hand_item and hand_item.action:
-                    hand_item.action(self.physics_engine.player)
                 elif settings.world_edit_mode:
                     if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
                         self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
@@ -70,6 +69,8 @@ class Game:
                     self.world_engine.set_block(block_pos, self.world_edit_current_block)
                     self.world_engine.refresh_block_group()
                     self.render_engine.update_world_surface()
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.physics_engine.player.key_shoot = False
 
     def event_shutdown(self):
         pass
@@ -154,12 +155,11 @@ def play_mode():
     game.world_engine.world = game.world_engine.create_new_random_world(10)
     game.world_engine.refresh_block_group()
     game.render_engine.update_world_surface()
+    from item_models import Flamethrower
+    flamethrower = Flamethrower.Flamethrower(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
+    game.physics_engine.player.inventory.add_item(flamethrower)
 
-    def shoot(player, angle:float = 0):
-        '''creates a new standart projectile in the given direction \n
-        angle *must* be given in radiants, else everythin gets scuffed'''
-        projectile = physics.Projectile_Gravity(player, angle, player.get_pos()[:], settings.projectile_speed, 10)
-        player.physics_engine.projectile_group.add(projectile)
+
 
     game.run()
  

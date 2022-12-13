@@ -33,7 +33,6 @@ textureMap = {
     "test_projectile": load_image('test_projectile.png'),
     "heart": load_image('heart.png'),
     "projectile": load_image('projectile.png'),
-    "weed": load_image("weed.png"),
     0 : load_image('luft.png'),
     1 : load_image('stein.png'),
     2 : load_image('grass.png'),
@@ -51,5 +50,7 @@ paralax_background = {
 }
 
 texture_item = {
+    "weed": load_image("weed.png"),
+    'Flamethrower': pygame.transform.scale(load_image('items/item_flamethrower.png'), (16,16)),
     1 : pygame.image.load(Path(__file__).with_name('item_dirt.png')),
 }
