@@ -28,7 +28,7 @@ inventory_size = (5,9)
 inventory_item_size = 8 # Pixel
 
 item_size = (16, 16)
-item_pick_up_delay = 0.2
+item_pick_up_delay = 3000000000
 
 # Renderer
 block_choices_screen_ofsett = (0,200)

@@ -2,6 +2,7 @@ import pygame
 import math
 import numpy as np
 import time 
+import sys
 
 import assets
 import settings
@@ -84,19 +85,23 @@ class Physics:
         self.player.move((self.player.speed_x*tick_lenght, 0))
             
     def handle_projectiles(self, tick_lenght:float):
+        # self.projectile_group.remove(wall_collision)
+        spritecollideany = pygame.sprite.spritecollideany
+        collide_rect = pygame.sprite.collide_rect
+        
         for projectile in self.projectile_group:
             projectile.move_forth(tick_lenght)
             will_die = False
             
             for entity in self.entity_group:
-                if pygame.sprite.collide_rect(projectile, entity):
+                if collide_rect(projectile, entity):
                     entity.health.take_damage(projectile.damage)
                     will_die = True
             
             if projectile.check_if_to_old(): 
                 will_die = True
                 
-            if pygame.sprite.spritecollideany(projectile, self.world_engine.block_sprite_group):
+            if spritecollideany(projectile, self.world_engine.block_sprite_group):
                 will_die = True
             
             if will_die: 
@@ -155,12 +160,14 @@ class Physics:
     def count_down_item_pickup_delay(self, tick_lenght:float):
         '''counts down the Item_pick_up_delay for every Item'''
         for sprite in self.items_group:
+            sprite.pick_up_delay = 0
             if sprite.pick_up_delay <= 0:
                 continue
             if not sprite.rect.colliderect(self.player):
                 sprite.reset_pick_up_delay()
                 continue
             sprite.pick_up_delay -= tick_lenght
+            print(f"item pickup delay: {sprite.pick_up_delay}")
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:
@@ -276,7 +283,8 @@ class Item(Entity):
     def reset_pick_up_delay(self):
         self.pick_up_delay = settings.item_pick_up_delay
     
-
+class Weapon(Item):
+    pass
             
 class Inventory:
     def __init__(self) -> None:
@@ -347,15 +355,16 @@ class Inventory:
 
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''
-    def __init__(self, owner:Entity, angle:float, start_pos:tuple, speed:float, damage:float) -> None:
+    def __init__(self, owner:Entity, image:pygame.image, angle:float, start_pos:tuple, speed:float, damage:float, lifetime:int = settings.projectile_lifetime ) -> None:
         pygame.sprite.Sprite.__init__(self=self)
+        self.image_normal = image
         self.pos_x, self.pos_y = start_pos
         self.angle = angle
         self.speed = speed
         self.damage = damage
+        self.lifetime = lifetime
         self.time_of_spawn = time.time()
                 
-        self.image_normal = assets.textureMap["projectile"]
         self.image = pygame.transform.rotate(self.image_normal, (math.degrees(self.angle)+180)*-1)
         self.rect = self.image.get_rect()
         
@@ -371,14 +380,15 @@ class Projectile(pygame.sprite.Sprite):
     def check_if_to_old(self) -> bool:
         ''' Returns weather the Sprite is older then the specified "projectile_lifetime" in settings '''
         existence_time = time.time() - self.time_of_spawn
-        if existence_time > settings.projectile_lifetime:
+        if existence_time*1000 > self.lifetime:
             return True
         return False
 
 
+
 class Projectile_Gravity(Projectile):  
-    def __init__(self, owner: Entity, angle: float, start_pos: tuple, speed: float, damage:float) -> None:
-        super().__init__(owner=owner, angle=angle, start_pos=start_pos, speed=speed, damage=damage)
+    def __init__(self, owner: Entity, image:pygame.image, angle: float, start_pos: tuple, speed: float, damage:float, lifetime:int = settings.projectile_lifetime) -> None:
+        super().__init__(owner=owner, image=image, angle=angle, start_pos=start_pos, speed=speed, damage=damage, lifetime=lifetime)
         self.down_speed = 0
     
     def move_forth(self, tick_lenght:float):

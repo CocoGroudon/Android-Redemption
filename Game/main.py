@@ -1,4 +1,7 @@
 import pygame
+import pstats
+import cProfile
+import time
 
 import assets 
 import settings as settings
@@ -40,7 +43,7 @@ class Game:
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
-                    self.physics_engine.player.key_shoot = True
+                    self.physics_engine.player.inventory.get_hand_item().reset_pick_up_delay()
                     self.physics_engine.discard_item()
                 elif event.key in settings.keybinds["inventory"]:
                     self.render_engine.inventory_show = not self.render_engine.inventory_show  
@@ -52,11 +55,13 @@ class Game:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x -= 128  
+                    
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
+                hand_item = self.physics_engine.player.inventory.get_hand_item()
                 self.physics_engine.player.key_shoot = True
-
-                hand_item = self.physics_engine.player.inventory.get_item(self.physics_engine.player.inventory.hand)
+                if issubclass(type(hand_item), physics.Weapon):
+                    hand_item.time_since_shoot = time.time()-hand_item.shoot_cooldown-1
                 
                 if self.render_engine.inventory_get_clicked(mouse_pos) and self.render_engine.inventory_show:
                     self.physics_engine.player.inventory.hand = self.render_engine.inventory_get_clicked_pos(mouse_pos)
@@ -69,6 +74,7 @@ class Game:
                     self.world_engine.set_block(block_pos, self.world_edit_current_block)
                     self.world_engine.refresh_block_group()
                     self.render_engine.update_world_surface()
+                    
             elif event.type == pygame.MOUSEBUTTONUP:
                 self.physics_engine.player.key_shoot = False
 
@@ -112,6 +118,8 @@ class Game_Editor(Game):
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
                     self.physics_engine.player.key_shoot = True
+                    
+                    
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.speed_y += 128
@@ -165,4 +173,5 @@ def play_mode():
  
 
 if __name__ == "__main__":
+    # cProfile.run('play_mode()', sort='tottime')
     play_mode()
