@@ -339,7 +339,8 @@ class Inventory:
         for col_index, line in enumerate(self.__inventory_list): # col_index and line_index are switched on purpose because of the was Python handles nested lists
             for line_index, cell in enumerate(line):
                 if cell != None:
-                    self.surface.blit(cell.image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
+                    image = pygame.transform.scale(cell.image, (settings.inventory_item_size, settings.inventory_item_size))
+                    self.surface.blit(image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
 
         size_x = settings.inventory_size[0]*settings.inventory_scale*settings.inventory_item_size
         size_y = settings.inventory_size[1]*settings.inventory_scale*settings.inventory_item_size

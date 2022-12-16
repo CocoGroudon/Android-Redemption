@@ -166,9 +166,13 @@ def play_mode():
     from item_models import Flamethrower
     flamethrower = Flamethrower.Flamethrower(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
     game.physics_engine.player.inventory.add_item(flamethrower)
-
-
-
+    from item_models import Deagle
+    deagle = Deagle.Deagle(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
+    game.physics_engine.player.inventory.add_item(deagle)
+    from item_models import Shotgun
+    shotgun = Shotgun.Shotgun(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
+    game.physics_engine.player.inventory.add_item(shotgun)
+    
     game.run()
  
 
