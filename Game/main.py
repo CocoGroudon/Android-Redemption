@@ -9,6 +9,8 @@ import world as world
 import renderer as renderer
 import physics as physics
 
+from enemy_models import Ball
+
 class Game:
     def __init__(self) -> None:
         self.screen = assets.screen
@@ -48,7 +50,8 @@ class Game:
                 elif event.key in settings.keybinds["inventory"]:
                     self.render_engine.inventory_show = not self.render_engine.inventory_show  
                 elif event.key == pygame.K_2:
-                    self.physics_engine.add_enemie()
+                    enemy = Ball.Ball(self.world_engine, self.physics_engine, (50,50))
+                    self.physics_engine.add_enemie(enemy)
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False
@@ -174,9 +177,13 @@ def play_mode():
     shotgun = Shotgun.Shotgun(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
     game.physics_engine.player.inventory.add_item(shotgun)
     
+    from enemy_models import Mothership
+    mothership = Mothership.Mothership(game.world_engine, game.physics_engine, (300,300))
+    game.physics_engine.add_enemie(mothership)
+    
     game.run()
  
 
 if __name__ == "__main__":
-    # cProfile.run('play_mode()', sort='tottime')
-    play_mode()
+    cProfile.run('play_mode()', sort='tottime')
+    # play_mode()

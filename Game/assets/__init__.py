@@ -58,3 +58,8 @@ projectiles = {
     "bullet": load_image('projectiles/bullet.png').convert_alpha(),
     "flame": load_image('projectiles/firesll_32x17.png').convert_alpha()
 }
+
+enemies = {
+    "ball": load_image('enemies/ball.png').convert_alpha(),
+    "mothership": load_image('enemies/shit2.png').convert_alpha()
+}
