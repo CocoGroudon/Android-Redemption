@@ -2,6 +2,7 @@ import pygame
 import math
 import numpy as np
 import time 
+import sys
 
 import assets
 import settings
@@ -70,7 +71,7 @@ class Physics:
         if self.player.key_shoot:
             angle = get_angle_to_world_pos(self.player.get_pos(), self.game.render_engine.get_world_pos_for_mouse_pos(pygame.mouse.get_pos()))
             self.player.shoot(angle)
-            self.player.key_shoot = False
+            # self.player.key_shoot = False
             
         if settings.gravity:
             self.player.speed_y += settings.grav_strenght*tick_lenght
@@ -84,19 +85,23 @@ class Physics:
         self.player.move((self.player.speed_x*tick_lenght, 0))
             
     def handle_projectiles(self, tick_lenght:float):
+        # self.projectile_group.remove(wall_collision)
+        spritecollideany = pygame.sprite.spritecollideany
+        collide_rect = pygame.sprite.collide_rect
+        
         for projectile in self.projectile_group:
             projectile.move_forth(tick_lenght)
             will_die = False
             
             for entity in self.entity_group:
-                if pygame.sprite.collide_rect(projectile, entity):
+                if collide_rect(projectile, entity):
                     entity.health.take_damage(projectile.damage)
                     will_die = True
             
             if projectile.check_if_to_old(): 
                 will_die = True
                 
-            if pygame.sprite.spritecollideany(projectile, self.world_engine.block_sprite_group):
+            if spritecollideany(projectile, self.world_engine.block_sprite_group):
                 will_die = True
             
             if will_die: 
@@ -109,7 +114,7 @@ class Physics:
 
         
     def new_item(self):
-        item = Item(self.world_engine, self, (100, 100), (16,16), assets.textureMap["weed"])
+        item = Item(self.world_engine, self, (100, 100), (16,16), assets.texture_item["weed"])
         self.entity_group.add(item)
         self.items_group.add(item)
 
@@ -155,12 +160,14 @@ class Physics:
     def count_down_item_pickup_delay(self, tick_lenght:float):
         '''counts down the Item_pick_up_delay for every Item'''
         for sprite in self.items_group:
+            sprite.pick_up_delay = 0
             if sprite.pick_up_delay <= 0:
                 continue
             if not sprite.rect.colliderect(self.player):
                 sprite.reset_pick_up_delay()
                 continue
             sprite.pick_up_delay -= tick_lenght
+            print(f"item pickup delay: {sprite.pick_up_delay}")
 
 class Entity(pygame.sprite.Sprite):
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:
@@ -235,19 +242,24 @@ class Entity(pygame.sprite.Sprite):
 
 class Player(Entity):
     def __init__(self, wordlengine_ref: WorldEngine, physicsengine_ref:Physics ,pos: tuple, size: tuple, image: pygame.image) -> None:
-        super().__init__(wordlengine_ref, physicsengine_ref, pos, size, image)
         self.speed_x = 0
         self.speed_y = 0
         self.key_jump = False
         self.time_since_in_air = 0 
         self.inventory = Inventory()
         self.key_shoot = False
+        self.last_shot = pygame.time.get_ticks()
+        super().__init__(wordlengine_ref, physicsengine_ref, pos, size, image)
         
     def shoot(self, angle:float):
         '''creates a new standart projectile in the given direction \n
         angle *must* be given in radiants, else everythin gets scuffed'''
-        projectile = Projectile_Gravity(self, angle, self.get_pos()[:], settings.projectile_speed, 10)
-        self.physics_engine.projectile_group.add(projectile)
+        item = self.inventory.get_hand_item()
+        if item == None:
+            return
+        if not callable(item.action):
+            return
+        self.inventory.get_hand_item().action(angle)
         
     
 
@@ -271,7 +283,8 @@ class Item(Entity):
     def reset_pick_up_delay(self):
         self.pick_up_delay = settings.item_pick_up_delay
     
-
+class Weapon(Item):
+    pass
             
 class Inventory:
     def __init__(self) -> None:
@@ -321,10 +334,13 @@ class Inventory:
     def update_surface(self):
         """ refreshes the surface / image of the Inventory """
         self.surface.fill((0,0,0,0))
+        # draw Border around the inventory
+        pygame.draw.rect(self.surface, (255,255,255), (0,0,settings.inventory_size[0]*settings.inventory_item_size,settings.inventory_size[1]*settings.inventory_item_size), 2)
         for col_index, line in enumerate(self.__inventory_list): # col_index and line_index are switched on purpose because of the was Python handles nested lists
             for line_index, cell in enumerate(line):
                 if cell != None:
-                    self.surface.blit(cell.image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
+                    image = pygame.transform.scale(cell.image, (settings.inventory_item_size, settings.inventory_item_size))
+                    self.surface.blit(image, (line_index*settings.inventory_item_size, col_index*settings.inventory_item_size))
 
         size_x = settings.inventory_size[0]*settings.inventory_scale*settings.inventory_item_size
         size_y = settings.inventory_size[1]*settings.inventory_scale*settings.inventory_item_size
@@ -334,18 +350,22 @@ class Inventory:
 
     def get_item_list(self) -> list:
         return self.__inventory_list
+    
+    def get_hand_item(self) -> Item:
+        return self.__inventory_list[self.hand[0]][self.hand[1]]
 
 class Projectile(pygame.sprite.Sprite):
     '''A basic projectile that has no gravity and isn`t hitscan'''
-    def __init__(self, owner:Entity, angle:float, start_pos:tuple, speed:float, damage:float) -> None:
+    def __init__(self, owner:Entity, image:pygame.image, angle:float, start_pos:tuple, speed:float, damage:float, lifetime:int = settings.projectile_lifetime ) -> None:
         pygame.sprite.Sprite.__init__(self=self)
+        self.image_normal = image
         self.pos_x, self.pos_y = start_pos
         self.angle = angle
         self.speed = speed
         self.damage = damage
+        self.lifetime = lifetime
         self.time_of_spawn = time.time()
                 
-        self.image_normal = assets.textureMap["projectile"]
         self.image = pygame.transform.rotate(self.image_normal, (math.degrees(self.angle)+180)*-1)
         self.rect = self.image.get_rect()
         
@@ -361,14 +381,15 @@ class Projectile(pygame.sprite.Sprite):
     def check_if_to_old(self) -> bool:
         ''' Returns weather the Sprite is older then the specified "projectile_lifetime" in settings '''
         existence_time = time.time() - self.time_of_spawn
-        if existence_time > settings.projectile_lifetime:
+        if existence_time*1000 > self.lifetime:
             return True
         return False
 
 
+
 class Projectile_Gravity(Projectile):  
-    def __init__(self, owner: Entity, angle: float, start_pos: tuple, speed: float, damage:float) -> None:
-        super().__init__(owner, angle, start_pos, speed, damage)
+    def __init__(self, owner: Entity, image:pygame.image, angle: float, start_pos: tuple, speed: float, damage:float, lifetime:int = settings.projectile_lifetime) -> None:
+        super().__init__(owner=owner, image=image, angle=angle, start_pos=start_pos, speed=speed, damage=damage, lifetime=lifetime)
         self.down_speed = 0
     
     def move_forth(self, tick_lenght:float):

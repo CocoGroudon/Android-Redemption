@@ -28,17 +28,15 @@ def load_image(path:str) -> pygame.image:
     
     
 textureMap = {
-    "test_entity": load_image('test_entity.png'),
-    "player_entity": load_image('playerasset.png'),
-    "test_projectile": load_image('test_projectile.png'),
-    "heart": load_image('heart.png'),
-    "projectile": load_image('projectile.png'),
-    "weed": load_image("weed.png"),
-    0 : load_image('luft.png'),
-    1 : load_image('stein.png'),
-    2 : load_image('grass.png'),
-    3 : load_image('lava.png'),
-    127 : load_image('testtexture.png')
+    "test_entity": load_image('test_entity.png').convert_alpha(),
+    "player_entity": load_image('playerasset.png').convert_alpha(),
+    "test_projectile": load_image('test_projectile.png').convert_alpha(),
+    "heart": load_image('heart.png').convert_alpha(),
+    0 : load_image('luft.png').convert_alpha(),
+    1 : load_image('stein.png').convert_alpha(),
+    2 : load_image('grass.png').convert_alpha(),
+    3 : load_image('lava.png').convert_alpha(),
+    127 : load_image('testtexture.png').convert_alpha()
 }
 
 paralax_background = {
@@ -51,5 +49,12 @@ paralax_background = {
 }
 
 texture_item = {
-    1 : pygame.image.load(Path(__file__).with_name('item_dirt.png')),
+    "weed": load_image("weed.png").convert_alpha(),
+    'Flamethrower': load_image('items/item_flamethrower.png').convert_alpha(),
+    1 : load_image('item_dirt.png').convert_alpha()
+}
+
+projectiles = {
+    "bullet": load_image('projectiles/bullet.png').convert_alpha(),
+    "flame": load_image('projectiles/firesll_32x17.png').convert_alpha()
 }

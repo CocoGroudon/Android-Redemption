@@ -1,10 +1,11 @@
 import pygame
 import math
 
+
 import settings
 import assets
 from world import WorldEngine
-
+from physics import get_angle_to_world_pos
 
 class Renderer:
     def __init__(self,* , game_engine_ref ,world_engine_ref:WorldEngine) -> None:
@@ -74,9 +75,18 @@ class Renderer:
         self.screen.blit(self.game.physics_engine.player.health.get_screen(), (self.screen.get_width()-healt_screen.get_width(),0))
 
     def blit_player_inventory(self):
-        if hand_item := self.game.physics_engine.player.inventory.get_item(self.game.physics_engine.player.inventory.hand):
-            rect_pos = self.game.physics_engine.player.rect.center
-            self.screen.blit(hand_item.image, (rect_pos[0]+self.camera_ofset[0], rect_pos[1]+self.camera_ofset[1]))
+        hand_item = self.game.physics_engine.player.inventory.get_hand_item()
+        if hand_item:
+            player_center = self.game.physics_engine.player.rect.center
+            origin = player_center[0]+self.camera_ofset[0] , player_center[1]+self.camera_ofset[1]
+            angle = -math.degrees(get_angle_to_world_pos(origin, pygame.mouse.get_pos()))
+            image = pygame.transform.rotate(hand_item.image, angle)
+            item_ofsett = image.get_width()/2, image.get_height()/2
+            
+            pos = player_center[0]+self.camera_ofset[0], player_center[1]+self.camera_ofset[1]
+            pos = pos[0]-item_ofsett[0], pos[1]-item_ofsett[1]
+            
+            self.screen.blit(image, pos)
         if self.inventory_show:
             self.blit_inventory_full()
             

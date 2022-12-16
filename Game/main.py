@@ -1,4 +1,7 @@
 import pygame
+import pstats
+import cProfile
+import time
 
 import assets 
 import settings as settings
@@ -40,7 +43,7 @@ class Game:
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
-                    self.physics_engine.player.key_shoot = True
+                    self.physics_engine.player.inventory.get_hand_item().reset_pick_up_delay()
                     self.physics_engine.discard_item()
                 elif event.key in settings.keybinds["inventory"]:
                     self.render_engine.inventory_show = not self.render_engine.inventory_show  
@@ -52,15 +55,16 @@ class Game:
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["right"]:
                     self.physics_engine.player.speed_x -= 128  
+                    
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
-
-                hand_item = self.physics_engine.player.inventory.get_item(self.physics_engine.player.inventory.hand)
+                hand_item = self.physics_engine.player.inventory.get_hand_item()
+                self.physics_engine.player.key_shoot = True
+                if issubclass(type(hand_item), physics.Weapon):
+                    hand_item.time_since_shoot = time.time()-hand_item.shoot_cooldown-1
                 
                 if self.render_engine.inventory_get_clicked(mouse_pos) and self.render_engine.inventory_show:
                     self.physics_engine.player.inventory.hand = self.render_engine.inventory_get_clicked_pos(mouse_pos)
-                elif hand_item and hand_item.action:
-                    hand_item.action(self.physics_engine.player)
                 elif settings.world_edit_mode:
                     if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
                         self.world_edit_current_block = self.render_engine.block_choices_screen_get_clicked(mouse_pos)
@@ -70,6 +74,9 @@ class Game:
                     self.world_engine.set_block(block_pos, self.world_edit_current_block)
                     self.world_engine.refresh_block_group()
                     self.render_engine.update_world_surface()
+                    
+            elif event.type == pygame.MOUSEBUTTONUP:
+                self.physics_engine.player.key_shoot = False
 
     def event_shutdown(self):
         pass
@@ -111,6 +118,8 @@ class Game_Editor(Game):
                     self.physics_engine.player.speed_x += 128
                 elif event.key in settings.keybinds["action"]:
                     self.physics_engine.player.key_shoot = True
+                    
+                    
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.speed_y += 128
@@ -154,15 +163,19 @@ def play_mode():
     game.world_engine.world = game.world_engine.create_new_random_world(10)
     game.world_engine.refresh_block_group()
     game.render_engine.update_world_surface()
-
-    def shoot(player, angle:float = 0):
-        '''creates a new standart projectile in the given direction \n
-        angle *must* be given in radiants, else everythin gets scuffed'''
-        projectile = physics.Projectile_Gravity(player, angle, player.get_pos()[:], settings.projectile_speed, 10)
-        player.physics_engine.projectile_group.add(projectile)
-
+    from item_models import Flamethrower
+    flamethrower = Flamethrower.Flamethrower(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
+    game.physics_engine.player.inventory.add_item(flamethrower)
+    from item_models import Deagle
+    deagle = Deagle.Deagle(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
+    game.physics_engine.player.inventory.add_item(deagle)
+    from item_models import Shotgun
+    shotgun = Shotgun.Shotgun(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
+    game.physics_engine.player.inventory.add_item(shotgun)
+    
     game.run()
  
 
 if __name__ == "__main__":
+    # cProfile.run('play_mode()', sort='tottime')
     play_mode()
