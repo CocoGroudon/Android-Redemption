@@ -427,8 +427,6 @@ class Projectile(pygame.sprite.Sprite):
     def move_forth(self, tick_lenght:float):
         '''Advances the projectile Position the distance'''
         dist = self.speed*tick_lenght
-        move_muiltiplyer_x = math.cos(self.angle)
-        move_muiltiplyer_y = math.sin(self.angle)
         self.pos_x += dist*math.cos(self.angle)
         self.pos_y += dist*math.sin(self.angle)
 
