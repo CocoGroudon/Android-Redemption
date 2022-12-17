@@ -180,14 +180,14 @@ def play_mode():
     from enemy_models import Mothership
     mothership = Mothership.Mothership(game.world_engine, game.physics_engine, (300,300))
     game.physics_engine.add_enemie(mothership)
-    
-    def test(wordlengine_ref:world.WorldEngine, physicsengine_ref:physics.Physics):
+
+    def test(wordlengine_ref:world.WorldEngine, physicsengine_ref:physics.Physics, **kwargs):
         # physicsengine_ref.player.health.take_damage(1)
         physicsengine_ref.player.set_pos(settings.player_starting_pos)
         print("test")
         
-    def test2(wordlengine_ref:world.WorldEngine, physicsengine_ref:physics.Physics):
-        physicsengine_ref.player.health.take_damage(1)
+    def test2(wordlengine_ref:world.WorldEngine, physicsengine_ref:physics.Physics, tick_lenght:float, **kwargs):
+        physicsengine_ref.player.health.take_damage(10*tick_lenght)
 
     zone = physics.Triggerzone(game.world_engine, game.physics_engine, (600,800), (100,100), test)
     zone2 = physics.Triggerzone(game.world_engine, game.physics_engine, (550,800), (100,200), test2)

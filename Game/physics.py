@@ -49,7 +49,7 @@ class Physics:
         if fps == 0 or fps == 1: return
         tick_lenght = 1/fps
 
-        self.handle_trigger_zones()
+        self.handle_trigger_zones(tick_lenght)
         self.handle_player(tick_lenght)
         self.handle_entities(tick_lenght)
         self.handle_enemies(tick_lenght)
@@ -58,10 +58,10 @@ class Physics:
         
         self.collect_item()
 
-    def handle_trigger_zones(self):
+    def handle_trigger_zones(self, tick_lenght):
         for trigger_zone in self.trigger_zones:
             if trigger_zone.check_if_entity_in_triggerzone(self.player):
-                trigger_zone.activate()
+                trigger_zone.activate(tick_lenght=tick_lenght)
 
     def handle_entities(self, tick_lenght):
         for entity in self.entity_group:
@@ -486,7 +486,7 @@ class Health_Bar:
         image_value_life_poins = 10
         images = self.max/image_value_life_poins
         screen = pygame.Surface((self.image.get_width()*images, self.image.get_height()), flags=pygame.SRCALPHA)
-        for x in range(self.current//image_value_life_poins):
+        for x in range(round(self.current)//image_value_life_poins):
             screen.blit(self.image, (x*self.image.get_width(), 0))
         return screen
     
@@ -510,5 +510,5 @@ class Triggerzone(pygame.Rect):
             return True
         return False
     
-    def activate(self):
-        self.action(wordlengine_ref=self.worldengine, physicsengine_ref=self.physicsengine)
+    def activate(self, tick_lenght:float):
+        self.action(wordlengine_ref=self.worldengine, physicsengine_ref=self.physicsengine, tick_lenght=tick_lenght)
