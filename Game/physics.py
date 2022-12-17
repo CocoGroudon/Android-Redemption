@@ -34,10 +34,11 @@ class Physics:
         self.projectile_group = pygame.sprite.Group()
         self.entity_group = pygame.sprite.Group()
         self.enemie_group = pygame.sprite.Group()
+        self.trigger_zones = list()
         # self.entity_group.add(
         #     Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]),
         #     Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
-        self.player = Player(self.world_engine, self, (settings.blocksize*8, settings.blocksize*21), (32,64), assets.textureMap["player_entity"])
+        self.player = Player(self.world_engine, self, settings.player_starting_pos, (32,64), assets.textureMap["player_entity"])
 
 
         self.items_group = pygame.sprite.Group()
@@ -48,6 +49,7 @@ class Physics:
         if fps == 0 or fps == 1: return
         tick_lenght = 1/fps
 
+        self.handle_trigger_zones()
         self.handle_player(tick_lenght)
         self.handle_entities(tick_lenght)
         self.handle_enemies(tick_lenght)
@@ -55,6 +57,11 @@ class Physics:
         self.count_down_item_pickup_delay(tick_lenght)
         
         self.collect_item()
+
+    def handle_trigger_zones(self):
+        for trigger_zone in self.trigger_zones:
+            if trigger_zone.check_if_entity_in_triggerzone(self.player):
+                trigger_zone.activate()
 
     def handle_entities(self, tick_lenght):
         for entity in self.entity_group:
@@ -482,3 +489,26 @@ class Health_Bar:
         for x in range(self.current//image_value_life_poins):
             screen.blit(self.image, (x*self.image.get_width(), 0))
         return screen
+    
+class Triggerzone(pygame.Rect):
+    def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, action:callable) -> None:
+        super().__init__(pos, size)
+        self.worldengine = wordlengine_ref
+        self.physicsengine = physicsengine_ref
+        self.action = action
+        self.surface = pygame.Surface((self.width, self.height), flags=pygame.SRCALPHA)
+        self.surface.fill(settings.trigger_zone_color)
+        pygame.draw.rect(self.surface, (255,255,255), (0,0,self.width,self.height), 1)
+        
+    def check_if_entity_in_triggerzone(self, entity:Entity) -> bool:
+        if self.colliderect(entity.rect):
+            return True
+        return False
+        
+    def check_if_pos_in_triggerzone(self, pos:tuple) -> bool:
+        if self.collidepoint(pos):
+            return True
+        return False
+    
+    def activate(self):
+        self.action(wordlengine_ref=self.worldengine, physicsengine_ref=self.physicsengine)
