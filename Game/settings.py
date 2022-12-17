@@ -16,6 +16,8 @@ world_room_options = ("base", "pit")
 # Physics
 projectile_speed = 1000
 projectile_lifetime = 10
+movement_step_size = blocksize/2
+projectile_step_size = blocksize/2
 
 player_jump_strength = blocksize*10
 gravity = True

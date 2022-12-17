@@ -45,7 +45,7 @@ class Physics:
     def tick(self):
         # Setup for Tick
         fps = self.game.clock.get_fps()
-        if fps == 0: return
+        if fps == 0 or fps == 1: return
         tick_lenght = 1/fps
 
         self.handle_player(tick_lenght)
@@ -68,34 +68,30 @@ class Physics:
                 self.entity_group.remove(entity)
                 continue
                 
-            if entity.gravity:
-                entity.speed_y += settings.grav_strenght*tick_lenght
-                if entity.check_if_ground():
-                    entity.speed_y = 0
+            entity.speed_x += entity.force_x * tick_lenght
+            entity.speed_y += entity.force_y * tick_lenght
                     
             try:
                 entity.action(tick_lenght)
-            except AttributeError:
+            except:
                 pass            
-            entity.move((0, entity.speed_y*tick_lenght))
             entity.move((entity.speed_x*tick_lenght, 0))    
+            entity.move((0, entity.speed_y*tick_lenght))
             
     def handle_player(self, tick_lenght):
         if self.player.key_shoot:
             angle = get_angle_to_world_pos(self.player.get_pos(), self.game.render_engine.get_world_pos_for_mouse_pos(pygame.mouse.get_pos()))
             self.player.shoot(angle)
             # self.player.key_shoot = False
-            
-        if settings.gravity:
-            self.player.speed_y += settings.grav_strenght*tick_lenght
-            if self.player.check_if_ground():
-                self.player.speed_y = 0
+                   
+        self.player.speed_x += self.player.force_x * tick_lenght
+        self.player.speed_y += self.player.force_y * tick_lenght
                 
         if self.player.key_jump and self.player.check_if_ground():
             self.player.speed_y -= settings.player_jump_strength
             
-        self.player.move((0, self.player.speed_y*tick_lenght))
-        self.player.move((self.player.speed_x*tick_lenght, 0))
+        self.player.move(((self.player.speed_x+self.player.move_speed_x) *tick_lenght, (self.player.speed_y+self.player.move_speed_y)*tick_lenght))
+        # self.player.move((0, self.player.speed_y*tick_lenght))
             
     def handle_enemies(self, tick_lenght):
         for enemie in self.enemie_group:
@@ -194,7 +190,9 @@ class Entity(pygame.sprite.Sprite):
     
     speed_x = 0
     speed_y = 0
-    gravity = True
+    gravity = settings.gravity
+    force_x = 0
+    force_y = settings.grav_strenght*gravity # boolean multiplication
     
     def __init__(self, wordlengine_ref:WorldEngine, physicsengine_ref:Physics, pos:tuple, size:tuple, image:pygame.image) -> None:
         pygame.sprite.Sprite.__init__(self)
@@ -211,20 +209,41 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(self.__pos[0], self.__pos[1])
     
-    def move(self, movement:tuple, *, recursion_depth:int=0):
-        self.__pos[0] += movement[0]
-        self.__pos[1] += movement[1]
-        self.update_rect()
-        # print(recursion_depth)
-        if recursion_depth >= 50:
-            self.__pos[0] -= movement[0]
-            self.__pos[1] -= movement[1]
-            return
-        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group) and recursion_depth <50:
-            self.__pos[0] -= movement[0]
-            self.__pos[1] -= movement[1]
-            self.move((movement[0]-np.sign(movement[0]), movement[1]-np.sign(movement[1])), recursion_depth=recursion_depth+1)
+    def move(self, movement:tuple):
+        to_move = list(movement)
+        while to_move[0] / settings.movement_step_size > 1:
+            if not self.move_step_x(settings.movement_step_size):
+                break
+            to_move[0] -= settings.movement_step_size
+        else:
+            self.move_step_x(to_move[0])
             
+        while to_move[1] / settings.movement_step_size > 1:
+            if not self.move_step_y(settings.movement_step_size):
+                break
+            to_move[1] -= settings.movement_step_size
+        else:
+            self.move_step_y(to_move[1])
+            
+    def move_step_x(self, movement:float):
+        self.__pos[0] += movement
+        self.update_rect()
+        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group):
+            self.__pos[0] -= movement
+            self.speed_x = 0
+            self.update_rect()
+            return False
+        return True
+    def move_step_y(self, movement:float):
+        self.__pos[1] += movement
+        self.update_rect()
+        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group):
+            self.__pos[1] -= movement
+            self.speed_y = 0
+            self.update_rect()
+            return False
+        return True
+    
     def get_angle_to_world_pos(self, origin:tuple, destination:tuple) -> float:
         '''
         returned value is in arc tangent
@@ -278,13 +297,15 @@ class Player(Entity):
     def __init__(self, wordlengine_ref: WorldEngine, physicsengine_ref:Physics ,pos: tuple, size: tuple, image: pygame.image) -> None:
         self.speed_x = 0
         self.speed_y = 0
+        self.move_speed_x = 0
+        self.move_speed_y = 0
         self.key_jump = False
         self.time_since_in_air = 0 
         self.inventory = Inventory()
         self.key_shoot = False
         self.last_shot = pygame.time.get_ticks()
         super().__init__(wordlengine_ref, physicsengine_ref, pos, size, image)
-        
+
     def shoot(self, angle:float):
         '''creates a new standart projectile in the given direction \n
         angle *must* be given in radiants, else everythin gets scuffed'''
@@ -406,6 +427,8 @@ class Projectile(pygame.sprite.Sprite):
     def move_forth(self, tick_lenght:float):
         '''Advances the projectile Position the distance'''
         dist = self.speed*tick_lenght
+        move_muiltiplyer_x = math.cos(self.angle)
+        move_muiltiplyer_y = math.sin(self.angle)
         self.pos_x += dist*math.cos(self.angle)
         self.pos_y += dist*math.sin(self.angle)
 

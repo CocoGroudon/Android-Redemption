@@ -9,7 +9,7 @@ class Mothership(Enemy):
     image = assets.enemies['mothership']
     movement_speed = 0
     size = image.get_size()
-    gravity = False
+    force_y = 0 # no gravity
     max_helth = 1000
     spawn_chance = 10000 # the higher the number the lower the chance
     

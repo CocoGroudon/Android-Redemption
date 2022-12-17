@@ -39,11 +39,11 @@ class Game:
                 elif event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = True
                 elif event.key in settings.keybinds["left"]:
-                    self.physics_engine.player.speed_x -= 128
+                    self.physics_engine.player.move_speed_x -= 128
                 elif event.key in settings.keybinds["down"]:
                     self.physics_engine.new_item()
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x += 128
+                    self.physics_engine.player.move_speed_x += 128
                 elif event.key in settings.keybinds["action"]:
                     self.physics_engine.player.inventory.get_hand_item().reset_pick_up_delay()
                     self.physics_engine.discard_item()
@@ -56,9 +56,9 @@ class Game:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False
                 elif event.key in settings.keybinds["left"]:
-                    self.physics_engine.player.speed_x += 128
+                    self.physics_engine.player.move_speed_x += 128
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x -= 128  
+                    self.physics_engine.player.move_speed_x -= 128
                     
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
@@ -164,7 +164,7 @@ def edit_mode():
 
 def play_mode():
     game = Game()
-    game.world_engine.world = game.world_engine.create_new_random_world(10)
+    game.world_engine.world = game.world_engine.create_new_random_world(1)
     game.world_engine.refresh_block_group()
     game.render_engine.update_world_surface()
     from item_models import Flamethrower
