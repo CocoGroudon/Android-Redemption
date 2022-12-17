@@ -9,6 +9,8 @@ import world as world
 import renderer as renderer
 import physics as physics
 
+from enemy_models import Ball
+
 class Game:
     def __init__(self) -> None:
         self.screen = assets.screen
@@ -37,24 +39,26 @@ class Game:
                 elif event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = True
                 elif event.key in settings.keybinds["left"]:
-                    self.physics_engine.player.speed_x -= 128
+                    self.physics_engine.player.move_speed_x -= 128
                 elif event.key in settings.keybinds["down"]:
                     self.physics_engine.new_item()
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x += 128
+                    self.physics_engine.player.move_speed_x += 128
                 elif event.key in settings.keybinds["action"]:
                     self.physics_engine.player.inventory.get_hand_item().reset_pick_up_delay()
                     self.physics_engine.discard_item()
                 elif event.key in settings.keybinds["inventory"]:
                     self.render_engine.inventory_show = not self.render_engine.inventory_show  
-
+                elif event.key == pygame.K_2:
+                    enemy = Ball.Ball(self.world_engine, self.physics_engine, (50,50))
+                    self.physics_engine.add_enemie(enemy)
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False
                 elif event.key in settings.keybinds["left"]:
-                    self.physics_engine.player.speed_x += 128
+                    self.physics_engine.player.move_speed_x += 128
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x -= 128  
+                    self.physics_engine.player.move_speed_x -= 128
                     
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
@@ -160,7 +164,7 @@ def edit_mode():
 
 def play_mode():
     game = Game()
-    game.world_engine.world = game.world_engine.create_new_random_world(10)
+    game.world_engine.world = game.world_engine.create_new_random_world(1)
     game.world_engine.refresh_block_group()
     game.render_engine.update_world_surface()
     from item_models import Flamethrower
@@ -173,9 +177,13 @@ def play_mode():
     shotgun = Shotgun.Shotgun(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
     game.physics_engine.player.inventory.add_item(shotgun)
     
+    from enemy_models import Mothership
+    mothership = Mothership.Mothership(game.world_engine, game.physics_engine, (300,300))
+    game.physics_engine.add_enemie(mothership)
+    
     game.run()
  
 
 if __name__ == "__main__":
-    # cProfile.run('play_mode()', sort='tottime')
-    play_mode()
+    cProfile.run('play_mode()', sort='tottime')
+    # play_mode()

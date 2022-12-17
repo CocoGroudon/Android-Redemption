@@ -21,7 +21,7 @@ class Renderer:
         
         pygame.font.init()
     
-        self.world_screen = pygame.Surface((settings.world_dimensions[0]*settings.blocksize, settings.world_dimensions[1]*settings.blocksize), flags=pygame.SRCALPHA)
+        self.world_screen = pygame.Surface((len(self.wold_engine.world)*settings.blocksize, len(self.wold_engine.world[0])*settings.blocksize), flags=pygame.SRCALPHA)
         self.update_world_surface()
         
         self.debug_font = pygame.font.SysFont("Calibri", 15)
@@ -54,6 +54,7 @@ class Renderer:
         self.screen.blit(self.world_screen, self.camera_ofset)
     
     def update_world_surface(self):
+        self.world_screen = pygame.Surface((len(self.wold_engine.world)*settings.blocksize, len(self.wold_engine.world[0])*settings.blocksize), flags=pygame.SRCALPHA)
         self.world_screen.fill((0,0,0,0))
         self.wold_engine.block_sprite_group.draw(self.world_screen)
            
@@ -200,13 +201,13 @@ class Renderer:
 
         if cam_pos_x > 0:
             cam_pos_x = 0
-        elif cam_pos_x < -settings.world_dimensions[0]*settings.blocksize+self.screen.get_width():
-            cam_pos_x = -settings.world_dimensions[0]*settings.blocksize+self.screen.get_width()
+        elif cam_pos_x < -len(self.wold_engine.world)*settings.blocksize+self.screen.get_width():
+            cam_pos_x = -len(self.wold_engine.world)*settings.blocksize+self.screen.get_width()
             
         if cam_pos_y > 0:
             cam_pos_y = 0
-        elif cam_pos_y < -settings.world_dimensions[1]*settings.blocksize+self.screen.get_height():
-            cam_pos_y = -settings.world_dimensions[1]*settings.blocksize+self.screen.get_height()
+        elif cam_pos_y < -len(self.wold_engine.world[0])*settings.blocksize+self.screen.get_height():
+            cam_pos_y = -len(self.wold_engine.world[0])*settings.blocksize+self.screen.get_height()
             
         self.camera_ofset = cam_pos_x, cam_pos_y
         
