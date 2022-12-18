@@ -1,0 +1,20 @@
+[ {
+"type" : "spawn_tp",
+    "attributes" : {
+        "pos_x" : 600,
+        "pos_y" : 800,
+        "size_x" : 100,
+        "size_y" : 100
+    }
+},
+{
+"type" : "spawn_tp",
+    "attributes" : {
+        "pos_x" : 800,
+        "pos_y" : 700,
+        "size_x" : 100,
+        "size_y" : 100
+    }
+}
+
+]

@@ -35,13 +35,20 @@ class Physics:
         self.entity_group = pygame.sprite.Group()
         self.enemie_group = pygame.sprite.Group()
         self.trigger_zones = list()
+        self.items_group = pygame.sprite.Group()
         # self.entity_group.add(
         #     Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]),
         #     Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
         self.player = Player(self.world_engine, self, settings.player_starting_pos, (32,64), assets.textureMap["player_entity"])
 
 
-        self.items_group = pygame.sprite.Group()
+        
+    def clear(self):
+        self.projectile_group.empty()
+        self.entity_group.empty()
+        self.enemie_group.empty()
+        self.trigger_zones = list()
+        self.items_group.empty()
         
     def tick(self):
         # Setup for Tick
@@ -281,14 +288,12 @@ class Entity(pygame.sprite.Sprite):
         self.update_rect()
     
     def check_if_ground(self) -> bool:
-        self.__pos[1] += 1
-        self.update_rect()
-        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group):
-            self.__pos[1] -= 1
-            return True
-        else:
-            self.__pos[1] -=1
-            return False
+        myrect = self.rect.copy().move(0, 1)
+        for block in self.world_engine.block_sprite_group:
+            if myrect.colliderect(block.rect):
+                return True
+        return False
+
             
 class Enemy(Entity):
     movement_speed = 10
