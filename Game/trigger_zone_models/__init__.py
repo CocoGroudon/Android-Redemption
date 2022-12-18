@@ -1,6 +1,3 @@
-import os
-import sys
-import settings
 from .spawn_tp import Spawn_Tp
 from .damage import Damage
 from .shop_tp import Shop_Tp

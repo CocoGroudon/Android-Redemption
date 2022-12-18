@@ -1,8 +1,6 @@
 import pygame
 import math
-import numpy as np
 import time 
-import sys
 
 import assets
 import settings

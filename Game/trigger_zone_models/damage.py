@@ -1,6 +1,3 @@
-    # def test2(wordlengine_ref:world.WorldEngine, physicsengine_ref:physics.Physics, tick_lenght:float, **kwargs):
-    #     physicsengine_ref.player.health.take_damage(10*tick_lenght)
-   
 import world
 import physics
 import settings

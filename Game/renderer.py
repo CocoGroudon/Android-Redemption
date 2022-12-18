@@ -1,7 +1,6 @@
 import pygame
 import math
 
-
 import settings
 import assets
 from world import WorldEngine

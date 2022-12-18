@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import pygame
 import numpy as np
 import random

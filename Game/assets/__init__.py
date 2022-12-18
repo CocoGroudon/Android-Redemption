@@ -1,8 +1,6 @@
 import pygame
-from pathlib import Path
 import sys
 import os
-import settings
 
 
 
