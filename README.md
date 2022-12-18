@@ -13,3 +13,5 @@ Currently only works in python3.9 because of dependencies issues
 To build the game urself (if you want to have the .exe or installer)
 1. do everythig mentioned in #Install
 2. run build.cmd
+
+credits: see credits.txt
