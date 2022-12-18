@@ -72,9 +72,7 @@ class WorldEngine:
         myPath = find_data_file(f"rooms/{room_name}/blocks.npy")
         return np.load(myPath)
                     
-    def create_new_random_world(self, amount_of_rooms: int):
-        room_name_list = [random.choice(settings.world_room_options) for _ in range(amount_of_rooms)]
-        room_name_list = ["spawn"] + room_name_list + ["end"]
+    def change_world_to_roomlist(self, room_name_list:list[str]):
         room_array_list = [self._get_room(name) for name in room_name_list]
         room_width_list = [len(room) for room in room_array_list]
         room_height_list = [len(room[0]) for room in room_array_list]
@@ -91,7 +89,14 @@ class WorldEngine:
                 for col_index, cell in enumerate(line):
                     world[line_index+world_current_fill_pos][col_index] = cell
             world_current_fill_pos += room_width_list[room_index]
-        return world
+        self.world = world
+        self.refresh_block_group()
+        self.game.render_engine.update_world_surface()
+                    
+    def create_new_random_world(self, amount_of_rooms: int):
+        room_name_list = [random.choice(settings.world_room_options) for _ in range(amount_of_rooms)]
+        room_name_list = ["spawn"] + room_name_list + ["end"]
+        self.change_world_to_roomlist(room_name_list)
         
 
 

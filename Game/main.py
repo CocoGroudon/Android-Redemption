@@ -131,6 +131,7 @@ class Game_Editor(Game):
     def __init__(self) -> None:
         super().__init__()
         settings.gravity = False
+        self.physics_engine.player.force_y = 0
         
     
     def handle_keyinputs(self):
@@ -141,26 +142,26 @@ class Game_Editor(Game):
                 if event.key == settings.keybinds["toggle_fullscreen"]:
                     pygame.display.toggle_fullscreen()
                 elif event.key in settings.keybinds["up"]:
-                    self.physics_engine.player.speed_y -= 128
+                    self.physics_engine.player.speed_y = -128
                 elif event.key in settings.keybinds["left"]:
-                    self.physics_engine.player.speed_x -= 128
+                    self.physics_engine.player.speed_x = -128
                 elif event.key in settings.keybinds["down"]:
-                    self.physics_engine.player.speed_y += 128
+                    self.physics_engine.player.speed_y = 128
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x += 128
+                    self.physics_engine.player.speed_x = 128
                 elif event.key in settings.keybinds["action"]:
                     self.physics_engine.player.key_shoot = True
                     
                     
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
-                    self.physics_engine.player.speed_y += 128
+                    self.physics_engine.player.speed_y = 0
                 elif event.key in settings.keybinds["left"]:
-                    self.physics_engine.player.speed_x += 128
+                    self.physics_engine.player.speed_x = 0
                 elif event.key in settings.keybinds["down"]:
-                    self.physics_engine.player.speed_y -= 128
+                    self.physics_engine.player.speed_y = 0
                 elif event.key in settings.keybinds["right"]:
-                    self.physics_engine.player.speed_x -= 128
+                    self.physics_engine.player.speed_x = 0
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_pos = pygame.mouse.get_pos()
                 if self.render_engine.block_choices_get_if_clicked_on(mouse_pos): # Spieler hat auf das Menu geklickt
@@ -192,9 +193,8 @@ def edit_mode():
 
 def play_mode():
     game = Game()
-    game.world_engine.world = game.world_engine.create_new_random_world(10)
-    game.world_engine.refresh_block_group()
-    game.render_engine.update_world_surface()
+    game.world_engine.create_new_random_world(0)
+
     from item_models import Flamethrower
     flamethrower = Flamethrower.Flamethrower(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
     game.physics_engine.player.inventory.add_item(flamethrower)
