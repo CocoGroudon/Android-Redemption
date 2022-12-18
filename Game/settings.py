@@ -28,6 +28,7 @@ hand_ofsett = (-12, -20)
 # Player
 inventory_size = (5,9)
 inventory_item_size = 8 # Pixel
+player_starting_pos = (blocksize*8, blocksize*21)
 
 item_size = (16, 16)
 item_pick_up_delay = 3000000000
@@ -36,6 +37,8 @@ item_pick_up_delay = 3000000000
 block_choices_screen_ofsett = (0,200)
 block_choices = (0,1,2,3,127)
 inventory_scale = 4
+draw_trigger_zones = True
+trigger_zone_color = pygame.Color(255, 0, 0, 128)
 
 keybinds = {
     "up": [pygame.K_SPACE, pygame.K_UP, pygame.K_w ],

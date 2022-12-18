@@ -49,6 +49,14 @@ class Renderer:
         if settings.debug_mode:
             self.debu_menu_update()
             self.screen.blit(self.debug_screen, (10,10))
+        
+        if settings.draw_trigger_zones:
+            self.blit_trigger_zones()
+            
+    def blit_trigger_zones(self):
+        for trigger in self.game.physics_engine.trigger_zones:
+            self.screen.blit(trigger.surface, trigger.move(self.camera_ofset))
+            # pygame.draw.rect(self.screen, settings.trigger_zone_color, trigger.move(self.camera_ofset))
             
     def blit_world(self):
         self.screen.blit(self.world_screen, self.camera_ofset)
