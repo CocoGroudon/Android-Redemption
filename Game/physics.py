@@ -281,14 +281,12 @@ class Entity(pygame.sprite.Sprite):
         self.update_rect()
     
     def check_if_ground(self) -> bool:
-        self.__pos[1] += 1
-        self.update_rect()
-        if pygame.sprite.spritecollideany(self, self.world_engine.block_sprite_group):
-            self.__pos[1] -= 1
-            return True
-        else:
-            self.__pos[1] -=1
-            return False
+        myrect = self.rect.copy().move(0, 1)
+        for block in self.world_engine.block_sprite_group:
+            if myrect.colliderect(block.rect):
+                return True
+        return False
+
             
 class Enemy(Entity):
     movement_speed = 10
