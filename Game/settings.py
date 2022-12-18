@@ -35,7 +35,7 @@ item_pick_up_delay = 3000000000
 
 # Renderer
 block_choices_screen_ofsett = (0,200)
-block_choices = (0,1,2,3,127)
+block_choices = (0,1,2,3,4,5,6,7,127)
 inventory_scale = 4
 draw_trigger_zones = True
 trigger_zone_color = pygame.Color(255, 0, 0, 128)

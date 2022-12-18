@@ -36,10 +36,8 @@ class Physics:
         self.enemie_group = pygame.sprite.Group()
         self.trigger_zones = list()
         self.items_group = pygame.sprite.Group()
-        # self.entity_group.add(
-        #     Entity(self.world_engine, self, (80,64), (16,16), assets.textureMap["test_entity"]),
-        #     Entity(self.world_engine, self, (40,40), (16,16), assets.textureMap["test_entity"]))
-        self.player = Player(self.world_engine, self, settings.player_starting_pos, (32,64), assets.textureMap["player_entity"])
+        
+        self.player = Player(self.world_engine, self, settings.player_starting_pos, (32,64), assets.misc["player_entity"])
 
 
         
@@ -135,13 +133,12 @@ class Physics:
                 self.projectile_group.remove(projectile)
         
     def create_item(self, item)-> bool :
-        # item = Item(self.world_engine, self, (100, 100), (16,16), assets.textureMap["weed"])
         self.entity_group.add(item)
         self.items_group.add(item)
 
         
     def new_item(self):
-        item = Item(self.world_engine, self, (100, 100), (16,16), assets.texture_item["weed"])
+        item = Item(self.world_engine, self, (100, 100), (16,16), assets.items["weed"])
         self.entity_group.add(item)
         self.items_group.add(item)
 
@@ -465,7 +462,7 @@ class Projectile_Gravity(Projectile):
 class Health_Bar:
     def __init__(self, max_Health:int, current_health:int = 0) -> None:
         self.max = max_Health
-        self.image = assets.textureMap["heart"]
+        self.image = assets.misc["heart"]
         if current_health == 0:
             self.current = max_Health
         else:

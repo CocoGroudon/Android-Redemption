@@ -13,7 +13,7 @@ class Shotgun(Weapon):
     projectile_speed = 800
     projectile_decay_time = 500
     projectiel_image = assets.projectiles["bullet"]
-    image = assets.texture_item["Flamethrower"]
+    image = assets.items["Flamethrower"]
     shoot_cooldown = 100 #time in ms
     damage = 2
 
