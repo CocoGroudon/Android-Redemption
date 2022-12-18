@@ -104,7 +104,7 @@ class Block_Sprite(pygame.sprite.Sprite):
     def __init__(self, value:int, pos:tuple) -> None:
         pygame.sprite.Sprite.__init__(self=self)
       
-        self.image = assets.textureMap[value]
+        self.image = assets.blocks[value]
         self.rect = self.image.get_rect()
         self.rect = self.rect.move(pos[0]*settings.blocksize, pos[1]*settings.blocksize)
 

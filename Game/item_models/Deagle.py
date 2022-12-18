@@ -13,7 +13,7 @@ class Deagle(Weapon):
     projectile_speed = 2000
     projectile_decay_time = 2000
     projectiel_image = assets.projectiles["bullet"]
-    image = assets.texture_item["Flamethrower"]
+    image = assets.items["AR"]
     shoot_cooldown = 100 #time in ms
     damage = 20
 

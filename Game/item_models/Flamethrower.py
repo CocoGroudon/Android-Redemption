@@ -13,7 +13,7 @@ class Flamethrower(Weapon):
     projectile_speed = 400
     projectile_decay_time = 2000
     projectiel_image = assets.projectiles["flame"]
-    image = assets.texture_item["Flamethrower"]
+    image = assets.items["Flamethrower"]
     shoot_cooldown = 10 #time in ms
     damage = 2
 

@@ -159,7 +159,7 @@ class Renderer:
     def block_choices_screen_update(self):
         self.block_choices_screen.fill((0,0,0,0))
         for index, block in enumerate(settings.block_choices):
-            self.block_choices_screen.blit(assets.textureMap[block], (0, index*settings.blocksize))
+            self.block_choices_screen.blit(assets.blocks[block], (0, index*settings.blocksize))
         pygame.draw.line(self.block_choices_screen, (255,255,255), (0,0), (settings.blocksize,0))
         pygame.draw.line(self.block_choices_screen, (255,255,255), (0,0), (0,settings.blocksize*len(settings.block_choices)-1))
         pygame.draw.line(self.block_choices_screen, (255,255,255), (0,settings.blocksize*len(settings.block_choices)-1), (settings.blocksize-1,settings.blocksize*len(settings.block_choices)-1))
