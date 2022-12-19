@@ -76,6 +76,8 @@ class Physics:
                 
             if will_die:
                 self.entity_group.remove(entity)
+                if issubclass(type(entity), Enemy):
+                    self.enemie_group.remove(entity)
                 continue
                 
             entity.speed_x += entity.force_x * tick_lenght
