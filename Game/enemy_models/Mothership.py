@@ -2,8 +2,9 @@ import math
 import random
 from physics import Enemy
 import assets
+import settings
 
-from enemy_models import Ball
+from .Ball import Ball
 
 class Mothership(Enemy):
     image = assets.enemies['mothership']
@@ -11,9 +12,10 @@ class Mothership(Enemy):
     size = image.get_size()
     force_y = 0 # no gravity
     max_helth = 1000
-    spawn_chance = 10000 # the higher the number the lower the chance
+    spawn_chance = 1000 # the higher the number the lower the chance
     
-    def __init__(self, wordlengine_ref, physicsengine_ref, pos: tuple) -> None:
+    def __init__(self, wordlengine_ref, physicsengine_ref, pos_x:int ,pos_y:int, ofsett:int=0) -> None:
+        pos = (pos_x+ofsett*settings.blocksize, pos_y)
 
         super().__init__(wordlengine_ref, physicsengine_ref, pos, self.size, self.image)
         
@@ -22,7 +24,7 @@ class Mothership(Enemy):
         
     def spawn_enemy(self):
         pos = self.get_pos()
-        ball = Ball.Ball(self.world_engine, self.physics_engine, (pos[0] + self.size[0] / 2, pos[1] + self.size[1] / 2))
+        ball = Ball(self.world_engine, self.physics_engine, pos[0] + self.size[0] / 2, pos[1] + self.size[1] / 2)
         self.physics_engine.add_enemie(ball)
     
     def action(self, tick_lenght: float):

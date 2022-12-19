@@ -84,6 +84,8 @@ class WorldEngine:
         for room_index, room in enumerate(room_array_list):
             if os.path.exists(f"{settings.dictPath}/rooms/{room_name_list[room_index]}/trigger_zones.json"):
                 self.game.build_trigger_zones_for_room(room_name_list[room_index], world_current_fill_pos)
+            if os.path.exists(f"{settings.dictPath}/rooms/{room_name_list[room_index]}/enemies.json"):
+                self.game.build_enemies_for_room(room_name_list[room_index], world_current_fill_pos)
             for line_index, line in enumerate(room):
                 for col_index, cell in enumerate(line):
                     world[line_index+world_current_fill_pos][col_index] = cell

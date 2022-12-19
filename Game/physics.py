@@ -105,6 +105,7 @@ class Physics:
             
     def handle_enemies(self, tick_lenght):
         for enemie in self.enemie_group:
+            enemie.action(tick_lenght)
             enemie.pathfind_to_player(self.player.get_pos(), tick_lenght)
             
     def handle_projectiles(self, tick_lenght:float):
@@ -299,6 +300,8 @@ class Enemy(Entity):
         new_pos = get_world_pos_for_angle((0,0), angle, self.movement_speed*stepsize)
         self.move(new_pos)
         
+    def action(self, tick_lenght:int): #Damit alle anderne Enemys auch ihre eigenen Aktionen haben können
+        pass
 
 class Player(Entity):
     def __init__(self, wordlengine_ref: WorldEngine, physicsengine_ref:Physics ,pos: tuple, size: tuple, image: pygame.image) -> None:
