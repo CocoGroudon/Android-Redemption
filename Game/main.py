@@ -11,8 +11,8 @@ import world as world
 import renderer as renderer
 import physics as physics
 import trigger_zone_models
+import enemy_models
 
-from enemy_models import Ball
 
 def find_data_file(filename):
     if getattr(sys, "frozen", False):
@@ -42,6 +42,20 @@ class Game:
     def draw(self):
         self.screen.fill((settings.backgroundcolor))
         self.render_engine.draw()
+        
+    def build_enemies_for_room(self, room_name:str, ofsett:int):
+        '''ofsett is the ofsett from the left side of the world'''
+        enemies = []
+        with open(find_data_file(f"rooms/{room_name}/enemies.json"), "r") as file:
+            data = json.load(file)
+            for enemy in data:
+                enemy_type = enemy["type"]
+                enemy_model = enemy_models.enemies[enemy_type]
+                atributes = enemy["attributes"]
+                myenemy = enemy_model(self.world_engine, self.physics_engine, **atributes, ofsett=ofsett)
+                enemies.append(myenemy)
+        self.physics_engine.enemie_group.add(enemies)
+        self.physics_engine.entity_group.add(enemies)
         
     def build_trigger_zones_for_room(self, room_name:str, ofsett:int):
         '''ofsett is the ofsett from the left side of the world'''
@@ -78,7 +92,7 @@ class Game:
                 elif event.key in settings.keybinds["inventory"]:
                     self.render_engine.inventory_show = not self.render_engine.inventory_show  
                 elif event.key == pygame.K_2:
-                    enemy = Ball.Ball(self.world_engine, self.physics_engine, (50,50))
+                    enemy = enemy_models.Ball(self.world_engine, self.physics_engine, (50,50))
                     self.physics_engine.add_enemie(enemy)
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
@@ -178,9 +192,9 @@ def edit_mode():
     room_name = str(input("wie soll der Raum heißen?: "))
     game = Game_Editor()
     
-    try: 
-        game.world_engine.load_room_from_memory(room_name)
-    except FileNotFoundError:
+    if os.path.exists(f"{settings.dictPath}/rooms/{room_name}"): 
+        game.world_engine.change_world_to_roomlist((room_name,))
+    else:
         os.mkdir(f"{settings.dictPath}/rooms/{room_name}")
         x = int(input("wie breit soll der Raum werden?: "))
         y = int(input("wie hoch soll der Raum werden?: "))
@@ -193,7 +207,7 @@ def edit_mode():
 
 def play_mode():
     game = Game()
-    game.world_engine.create_new_random_world(0)
+    game.world_engine.create_new_random_world(settings.world_room_amount)
 
     from item_models import Flamethrower
     flamethrower = Flamethrower.Flamethrower(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
@@ -205,9 +219,9 @@ def play_mode():
     shotgun = Shotgun.Shotgun(game.world_engine, game.physics_engine, game.physics_engine.player.get_pos())
     game.physics_engine.player.inventory.add_item(shotgun)
     
-    from enemy_models import Mothership
-    mothership = Mothership.Mothership(game.world_engine, game.physics_engine, (300,300))
-    game.physics_engine.add_enemie(mothership)
+    # from enemy_models import Mothership
+    # mothership = Mothership.Mothership(game.world_engine, game.physics_engine, (300,300))
+    # game.physics_engine.add_enemie(mothership)
  
     game.run()
  

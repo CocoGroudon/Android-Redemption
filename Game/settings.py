@@ -9,8 +9,9 @@ debug_mode = True
 
 # World
 world_name = "test"
-world_dimensions = (500, 100)
+# world_dimensions = (500, 100)
 world_room_options = ("base", "pit")
+world_room_amount = 10
 
 # Physics
 projectile_speed = 1000
