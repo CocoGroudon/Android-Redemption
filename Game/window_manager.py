@@ -1,12 +1,11 @@
 import pygame
 import settings
-
-from scene import Scene
-from game import Game, play_mode, Mode_Edit
-from main_menu import Main_Menu
-
 pygame.init()
 pygame.display.init()
+
+from scene import Scene
+
+
     
 class Window:
     screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
@@ -17,6 +16,9 @@ class Window:
         self.clock = pygame.time.Clock()
         self.scenes: Scene = {}
         self.current_scene:Scene = None
+
+        from game import Game, play_mode, Mode_Edit
+        from main_menu import Main_Menu
 
         self.game_scene = Game(window_manager=self)
         self.game_scene = play_mode(self.game_scene)
@@ -57,8 +59,8 @@ class Window:
             
             pygame.display.flip()
             self.clock.tick(settings.framerate)
-        for screen in self.scenes:
-            screen.shutdown()
+        for sceene in self.scenes:
+            sceene.shutdown()
             
             
 if __name__ == "__main__":
