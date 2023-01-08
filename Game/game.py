@@ -27,6 +27,8 @@ def find_data_file(filename):
 
 class Game(Scene):
     def __init__(self, window_manager) -> None:
+        super().__init__(window_manager)
+        self.subscreeens = []
         self.window_manager = window_manager
         self.screen = window_manager.screen
 
@@ -35,6 +37,7 @@ class Game(Scene):
         self.physics_engine = physics.Physics(self.world_engine, self)
         
         self.world_edit_current_block = 1
+        
         
 
     def draw(self):

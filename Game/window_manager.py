@@ -23,9 +23,7 @@ class Window:
         self.game_scene = Game(window_manager=self)
         self.game_scene = play_mode(self.game_scene)
         self.scenes["game"] = self.game_scene
-        
-        self.edit_scene = Mode_Edit(window_manager=self)
-        self.scenes["edit"] = self.edit_scene
+
         
         self.main_menu_scene = Main_Menu(window=self)
         self.scenes["menu"] = self.main_menu_scene
@@ -43,8 +41,6 @@ class Window:
                     self.current_scene = self.scenes["menu"]
                 elif event.key == pygame.K_KP_1:
                     self.current_scene = self.scenes["game"]
-                elif event.key == pygame.K_KP_2:
-                    self.current_scene = self.scenes["edit"]
             myEvents.append(event)
         return myEvents
     
