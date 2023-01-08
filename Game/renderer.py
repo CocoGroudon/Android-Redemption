@@ -67,7 +67,7 @@ class Renderer:
            
     def debu_menu_update(self):
         self.debug_screen.fill((0,0,0,0))
-        fpsText = self.debug_font.render(f"FPS : {round(self.game.clock.get_fps(),3)}", False, 6)
+        fpsText = self.debug_font.render(f"FPS : {round(self.game.window_manager.clock.get_fps(),3)}", False, 6)
         self.debug_screen.blit(fpsText, (0,0))
             
     def blit_entities(self):

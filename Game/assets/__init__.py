@@ -4,8 +4,7 @@ import os
 
 
 
-pygame.display.init()
-screen = pygame.display.set_mode((500,500), pygame.RESIZABLE)
+
 
 def find_data_file(filename):
     if getattr(sys, "frozen", False):

@@ -48,7 +48,7 @@ class Physics:
         
     def tick(self):
         # Setup for Tick
-        fps = self.game.clock.get_fps()
+        fps = self.game.window_manager.clock.get_fps()
         if fps == 0 or fps == 1: return
         tick_lenght = 1/fps
 
