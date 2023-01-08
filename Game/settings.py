@@ -5,13 +5,13 @@ framerate = 0
 backgroundcolor = (44, 37, 68)
 blocksize = 32
 world_edit_mode = False
-debug_mode = True
+debug_mode = False
 
 # World
 world_name = "test"
 # world_dimensions = (500, 100)
 world_room_options = ("base", "pit")
-world_room_amount = 0
+world_room_amount = 5
 
 # Physics
 projectile_speed = 1000
@@ -37,7 +37,7 @@ item_pick_up_delay = 3000000000
 block_choices_screen_ofsett = (0,200)
 block_choices = (0,1,2,3,4,5,6,7,127)
 inventory_scale = 4
-draw_trigger_zones = True
+draw_trigger_zones = False #Debug
 trigger_zone_color = pygame.Color(255, 0, 0, 128)
 
 # Pause Menu

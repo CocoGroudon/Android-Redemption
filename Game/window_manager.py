@@ -58,8 +58,9 @@ class Window:
             
             pygame.display.flip()
             self.clock.tick(settings.framerate)
-        for sceene in self.scenes:
-            sceene.shutdown()
+        for scene_name in self.scenes:
+            scene = self.scenes[scene_name]
+            scene.shutdown()
             
             
 if __name__ == "__main__":
