@@ -3,6 +3,8 @@ import settings
 pygame.init()
 pygame.display.init()
 
+import pause_menu
+
 from scene import Scene
 
 
@@ -28,6 +30,9 @@ class Window:
         self.main_menu_scene = Main_Menu(window=self)
         self.scenes["menu"] = self.main_menu_scene
         
+        self.pause_screen = pause_menu.Pause_Menu(window=self, game=self.game_scene)
+        self.scenes["pause"] = self.pause_screen
+        
         self.current_scene = self.scenes["menu"]
     
     def filter_events(self, events):
@@ -41,6 +46,8 @@ class Window:
                     self.current_scene = self.scenes["menu"]
                 elif event.key == pygame.K_KP_1:
                     self.current_scene = self.scenes["game"]
+                elif event.key == pygame.K_KP_2:
+                    self.current_scene = self.scenes["pause"]
             myEvents.append(event)
         return myEvents
     

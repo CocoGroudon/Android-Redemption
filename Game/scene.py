@@ -25,7 +25,7 @@ class Scene:
         pass
     
     def draw(self):
-        pass
+        self.window.screen.fill((255, 255, 255))
     
     def handle_events(self, events):
         pass
