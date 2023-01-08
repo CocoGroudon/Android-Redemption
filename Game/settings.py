@@ -40,6 +40,11 @@ inventory_scale = 4
 draw_trigger_zones = True
 trigger_zone_color = pygame.Color(255, 0, 0, 128)
 
+# Pause Menu
+pause_font_size = 50
+pause_font_kind = "Arial"
+pause_font = pygame.font.SysFont(pause_font_kind, pause_font_size)
+
 keybinds = {
     "up": [pygame.K_SPACE, pygame.K_UP, pygame.K_w ],
     "left": [pygame.K_a, pygame.K_LEFT ],
@@ -47,7 +52,8 @@ keybinds = {
     "right": [pygame.K_d, pygame.K_RIGHT ],
     "toggle_fullscreen": pygame.K_F11,
     "inventory": [pygame.K_e],
-    "action": [pygame.K_q]
+    "action": [pygame.K_q],
+    "pause": [pygame.K_ESCAPE]
 }
 
 dictPath = os.path.dirname(os.path.abspath(__file__))

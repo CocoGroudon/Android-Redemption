@@ -1,8 +1,8 @@
 import pygame
-import settings
 pygame.init()
 pygame.display.init()
-
+pygame.font.init()
+import settings
 import pause_menu
 
 from scene import Scene
@@ -50,6 +50,9 @@ class Window:
                     self.current_scene = self.scenes["pause"]
             myEvents.append(event)
         return myEvents
+    
+    def change_scene(self, scene_name):
+        self.current_scene = self.scenes[scene_name]
     
     def run(self):
         while self.isRunning:

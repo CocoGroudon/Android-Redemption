@@ -92,9 +92,12 @@ class Game(Scene):
                     self.physics_engine.discard_item()
                 elif event.key in settings.keybinds["inventory"]:
                     self.render_engine.inventory_show = not self.render_engine.inventory_show  
+                elif event.key in settings.keybinds["pause"]:
+                    self.window_manager.change_scene("pause")
                 elif event.key == pygame.K_2:
                     enemy = enemy_models.Ball(self.world_engine, self.physics_engine, (50,50))
                     self.physics_engine.add_enemie(enemy)
+                    
             elif event.type == pygame.KEYUP:
                 if event.key in settings.keybinds["up"]:
                     self.physics_engine.player.key_jump = False
