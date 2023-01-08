@@ -21,8 +21,11 @@ class Pause_Menu(Scene):
     def rebuild_screen(self, new_size: tuple[int, int]):
         self.screen = pygame.surface.Surface(new_size, pygame.SRCALPHA)
         self.screen.fill((0, 0, 0, 128))
-        text = settings.pause_font.render("Pausiert!", True, (255, 255, 255))
-        self.screen.blit(text, self.window.screen.get_rect().center)
+        text = f"Pausiert! Drücke {pygame.key.name(settings.keybinds['pause'][0])} um fortzufahren"
+        text_image = settings.pause_font.render(text, True, (255, 255, 255))
+        window_center = self.window.screen.get_rect().center
+        renderpos = window_center[0] - text_image.get_width() // 2, window_center[1] - text_image.get_height() // 2
+        self.screen.blit(text_image, renderpos)
         
     def draw(self):
         window_size = self.window.screen.get_size()

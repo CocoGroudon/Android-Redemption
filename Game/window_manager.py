@@ -20,20 +20,15 @@ class Window:
         self.current_scene:Scene = None
 
         from game import Game, play_mode, Mode_Edit
-        from main_menu import Main_Menu
 
         self.game_scene = Game(window_manager=self)
         self.game_scene = play_mode(self.game_scene)
         self.scenes["game"] = self.game_scene
-
-        
-        self.main_menu_scene = Main_Menu(window=self)
-        self.scenes["menu"] = self.main_menu_scene
         
         self.pause_screen = pause_menu.Pause_Menu(window=self, game=self.game_scene)
         self.scenes["pause"] = self.pause_screen
         
-        self.current_scene = self.scenes["menu"]
+        self.current_scene = self.scenes["pause"]
     
     def filter_events(self, events):
         myEvents = []
@@ -42,9 +37,7 @@ class Window:
                 self.isRunning = False
                 continue
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_KP_0:
-                    self.current_scene = self.scenes["menu"]
-                elif event.key == pygame.K_KP_1:
+                if event.key == pygame.K_KP_1:
                     self.current_scene = self.scenes["game"]
                 elif event.key == pygame.K_KP_2:
                     self.current_scene = self.scenes["pause"]
