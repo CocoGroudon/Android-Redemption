@@ -54,7 +54,7 @@ paralax_background = {
 
 items = {
     "weed": load_image("weed.png").convert_alpha(),
-    'Flamethrower': load_image('items/item_flamethrower.png').convert_alpha(),
+    'Flamethrower': pygame.transform.scale(load_image('items/item_flamethrower.png').convert_alpha(), (100, 35)) , 
     'AR': load_image('items/AR.png').convert_alpha(),
     1 : load_image('item_dirt.png').convert_alpha()
 }
